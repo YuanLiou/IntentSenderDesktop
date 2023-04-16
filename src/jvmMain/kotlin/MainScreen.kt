@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -31,6 +33,20 @@ fun MainScreen(
         Surface(
             modifier = Modifier.padding(4.dp)
         ) {
+            // region ShowDialogs
+            var showDialog by remember { mutableStateOf(false) }
+            if (showDialog) {
+                ShowDialog(
+                    onDismissRequest = {
+                        showDialog = false
+                    },
+                    onOkButtonClicked = {
+                        showDialog = false
+                    }
+                )
+            }
+            // endregion ShowDialogs
+
             Column {
                 TextInputFields(
                     title = "adb Path",
@@ -71,6 +87,9 @@ fun MainScreen(
                     endPadding = endPadding,
                     onClearButtonClicked = {
                         viewModel.clearFields()
+                    },
+                    onSendButtonClicked = {
+                        showDialog = true
                     }
                 )
             }
@@ -142,5 +161,30 @@ private fun TextInputFields(
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ShowDialog(
+    onDismissRequest: (() -> Unit)? = null,
+    onOkButtonClicked: (() -> Unit)? = null
+) {
+    AlertDialog(
+        title = {
+            Text("Title")
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onOkButtonClicked?.invoke()
+                }
+            ) {
+                Text("OK")
+            }
+        },
+        onDismissRequest = {
+            onDismissRequest?.invoke()
+        }
+    )
 }
 
