@@ -8,7 +8,9 @@ fun main() = application {
         onCloseRequest = ::exitApplication
     ) {
         MainScreen(
-            viewModel = IntentPusherViewModel()
+            viewModel = IntentPusherViewModel(),
+            topPadding = 16,
+            endPadding = 12
         )
     }
 }

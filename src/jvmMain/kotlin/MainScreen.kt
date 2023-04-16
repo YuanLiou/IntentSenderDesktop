@@ -23,14 +23,10 @@ import intentpusher.IntentPusherViewModel
 @Composable
 @Preview
 fun MainScreen(
-    viewModel: IntentPusherViewModel
+    viewModel: IntentPusherViewModel,
+    topPadding: Int = 0,
+    endPadding: Int = 0
 ) {
-    var inputPath = ""
-    var inputPackage = ""
-    var inputContent = ""
-    val topPadding = 16
-    val endPadding = 12
-
     MaterialTheme {
         Surface(
             modifier = Modifier.padding(4.dp)
@@ -74,6 +70,7 @@ fun MainScreen(
                     topPadding = topPadding,
                     endPadding = endPadding,
                     onClearButtonClicked = {
+                        viewModel.clearFields()
                     }
                 )
             }

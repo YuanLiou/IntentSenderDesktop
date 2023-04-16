@@ -26,4 +26,10 @@ class IntentPusherViewModel {
     fun updateContent(content: String) {
         this.inputContent = content
     }
+
+    fun clearFields() {
+        inputPath = ""
+        inputPackageName = ""
+        inputContent = ""
+    }
 }
