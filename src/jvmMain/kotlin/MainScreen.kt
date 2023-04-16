@@ -18,10 +18,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import intentpusher.IntentPusherViewModel
 
 @Composable
 @Preview
-fun MainScreen() {
+fun MainScreen(
+    viewModel: IntentPusherViewModel
+) {
     var inputPath = ""
     var inputPackage = ""
     var inputContent = ""
@@ -35,25 +38,38 @@ fun MainScreen() {
             Column {
                 TextInputFields(
                     title = "adb Path",
+                    textFieldText = {
+                        viewModel.inputPath
+                    },
                     topPadding = topPadding,
-                    endPadding = endPadding
-                ) {
-                    inputPackage = it
-                }
+                    endPadding = endPadding,
+                    onTextFieldValueChanged = {
+                        viewModel.updateInputPath(it)
+                    }
+                )
+
                 TextInputFields(
                     title = "Package Name",
+                    textFieldText = {
+                        viewModel.inputPackageName
+                    },
                     topPadding = topPadding,
-                    endPadding = endPadding
-                ) {
-                    inputPackage = it
-                }
+                    endPadding = endPadding,
+                    onTextFieldValueChanged = {
+                        viewModel.updatePackageName(it)
+                    }
+                )
                 TextInputFields(
                     title = "Content",
+                    textFieldText = {
+                        viewModel.inputContent
+                    },
                     topPadding = topPadding,
-                    endPadding = endPadding
-                ) {
-                    inputContent = it
-                }
+                    endPadding = endPadding,
+                    onTextFieldValueChanged = {
+                        viewModel.updateContent(it)
+                    }
+                )
                 ActionButtons(
                     topPadding = topPadding,
                     endPadding = endPadding,
@@ -97,13 +113,12 @@ private fun ActionButtons(
 @Composable
 private fun TextInputFields(
     title: String,
+    textFieldText: () -> String,
     topPadding: Int = 0,
     endPadding: Int = 12,
-    modifier: Modifier = Modifier,
-    onTextFieldChanged: (String) -> Unit,
+    onTextFieldValueChanged: ((String) -> Unit)? = null,
+    modifier: Modifier = Modifier
 ) {
-    var inputValue by remember { mutableStateOf("") }
-
     Surface(
         modifier = modifier
             .padding(top = topPadding.dp)
@@ -118,10 +133,9 @@ private fun TextInputFields(
                     .padding(16.dp)
             )
             TextField(
-                value = inputValue,
+                value = textFieldText(),
                 onValueChange = {
-                    inputValue = it
-                    onTextFieldChanged(it)
+                    onTextFieldValueChanged?.invoke(it)
                 },
                 singleLine = true,
                 modifier = modifier
