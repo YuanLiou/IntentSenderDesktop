@@ -13,6 +13,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import intentpusher.IntentPusherViewModel
+import intentpusher.IntentPusherViewState
 
 @Composable
 @Preview
@@ -34,18 +36,31 @@ fun MainScreen(
             modifier = Modifier.padding(4.dp)
         ) {
             // region ShowDialogs
-            var showDialog by remember { mutableStateOf(false) }
-            if (showDialog) {
+            data class DialogInfo(val title: String, val message: String)
+            var dialogInfo by remember { mutableStateOf<DialogInfo?>(null) }
+            if (dialogInfo != null) {
                 ShowDialog(
+                    title = dialogInfo?.title.orEmpty(),
+                    message = dialogInfo?.message.orEmpty(),
                     onDismissRequest = {
-                        showDialog = false
+                        viewModel.dismissDialog()
+                        dialogInfo = null
                     },
                     onOkButtonClicked = {
-                        showDialog = false
+                        viewModel.dismissDialog()
+                        dialogInfo = null
                     }
                 )
             }
             // endregion ShowDialogs
+
+            val state = viewModel.viewStates.collectAsState().value
+            if (state is IntentPusherViewState.ShowDialog) {
+                dialogInfo = DialogInfo(
+                    title = state.title,
+                    message = state.message
+                )
+            }
 
             Column {
                 TextInputFields(
@@ -89,7 +104,7 @@ fun MainScreen(
                         viewModel.clearFields()
                     },
                     onSendButtonClicked = {
-                        showDialog = true
+                        viewModel.showSendMessage()
                     }
                 )
             }
@@ -166,13 +181,18 @@ private fun TextInputFields(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShowDialog(
+    title: String,
+    message: String,
     onDismissRequest: (() -> Unit)? = null,
     onOkButtonClicked: (() -> Unit)? = null
 ) {
     AlertDialog(
         title = {
-            Text("Title")
+            Text(title)
         },
+        text = {
+            Text(message)
+        } ,
         confirmButton = {
             Button(
                 onClick = {
@@ -187,4 +207,3 @@ fun ShowDialog(
         }
     )
 }
-
