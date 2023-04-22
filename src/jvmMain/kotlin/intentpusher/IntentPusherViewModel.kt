@@ -16,7 +16,7 @@ class IntentPusherViewModel(
     val viewStates: StateFlow<IntentPusherViewState>
         get() = _viewStates.asStateFlow()
 
-    var inputPath by mutableStateOf("")
+    var inputPath by mutableStateOf(ShellCommandExecutor.DEFAULT_ADB_PATH)
         private set
 
     var inputPackageName by mutableStateOf("")
@@ -38,7 +38,7 @@ class IntentPusherViewModel(
     }
 
     fun clearFields() {
-        inputPath = ""
+        inputPath = ShellCommandExecutor.DEFAULT_ADB_PATH
         inputPackageName = ""
         inputContent = ""
     }
