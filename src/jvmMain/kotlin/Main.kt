@@ -14,7 +14,7 @@ fun main() = application {
             viewModel = IntentPusherViewModel(
                 AdbCommandExecutor(
                     SystemChecker(),
-                    CommandBuilder()
+                    CommandBuilder(SystemChecker())
                 )
             ),
             topPadding = 16,

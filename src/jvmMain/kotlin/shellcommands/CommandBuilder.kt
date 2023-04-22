@@ -1,6 +1,11 @@
 package shellcommands
 
-class CommandBuilder {
+import utils.OsPlatform
+import utils.SystemChecker
+
+class CommandBuilder(
+    private val systemChecker: SystemChecker
+) {
 
     fun buildCommand(
         adbPath: String,
@@ -27,12 +32,17 @@ class CommandBuilder {
             "\'${shellCommands.joinToString(" ")}\'"
         )
 
-        val exetutorCommand = listOf(
-            "sh",
-            "-c",
-            adbCommands.joinToString(" ")
-        )
-
+        val exetutorCommand = lookUpExetutorCommand().toMutableList().apply {
+            add(adbCommands.joinToString(" "))
+        }
         return AdbCommandExecutor.Command(exetutorCommand)
+    }
+
+    private fun lookUpExetutorCommand(): List<String> {
+        return when (systemChecker.checkSystem()) {
+            OsPlatform.MAC, OsPlatform.LINUX -> listOf("sh", "-c")
+            OsPlatform.WINDOWS -> listOf("cmd.exe", "/c")
+            OsPlatform.OTHER -> emptyList()
+        }
     }
 }

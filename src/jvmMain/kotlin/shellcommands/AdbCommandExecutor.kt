@@ -8,14 +8,6 @@ import java.util.concurrent.TimeUnit
 import utils.StreamGobbler
 import utils.SystemChecker
 
-fun main() {
-    val adbCommandExecutor = AdbCommandExecutor(
-        SystemChecker(),
-        CommandBuilder()
-    )
-    adbCommandExecutor.sendDeeplink(inputPackageName = "", inputContent = "https://taiwan-ebook-lover.github.io/searches/mA8m91o8ylnY9hIGzQDL")
-}
-
 class AdbCommandExecutor(
     private val systemChecker: SystemChecker,
     private val commandBuilder: CommandBuilder
