@@ -5,14 +5,18 @@ import container.TaskResult
 import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import utils.OsPlatform
 import utils.StreamGobbler
+import utils.SystemChecker
 
 fun main() {
-    val shellCommandExecutor = ShellCommandExecutor()
+    val shellCommandExecutor = ShellCommandExecutor(SystemChecker())
     shellCommandExecutor.sendDeeplink(inputPackageName = "", inputContent = "https://taiwan-ebook-lover.github.io/searches/mA8m91o8ylnY9hIGzQDL")
 }
 
-class ShellCommandExecutor {
+class ShellCommandExecutor(
+    private val systemChecker: SystemChecker
+) {
 
     fun sendDeeplink(
         inputPath: String = DEFAULT_ADB_PATH,
@@ -29,8 +33,7 @@ class ShellCommandExecutor {
             inputPath
         }
 
-        val osName = System.getProperty("os.name").lowercase()
-        if (!osName.startsWith("mac")) {
+        if (!systemChecker.isMac()) {
             return TaskResult.Failed(CommandExecutorException("Only Support Mac, currently"))
         }
 

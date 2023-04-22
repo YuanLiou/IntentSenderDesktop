@@ -2,6 +2,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import intentpusher.IntentPusherViewModel
 import shellcommands.ShellCommandExecutor
+import utils.SystemChecker
 
 fun main() = application {
     Window(
@@ -10,7 +11,7 @@ fun main() = application {
     ) {
         MainScreen(
             viewModel = IntentPusherViewModel(
-                ShellCommandExecutor()
+                ShellCommandExecutor(SystemChecker())
             ),
             topPadding = 16,
             endPadding = 12
