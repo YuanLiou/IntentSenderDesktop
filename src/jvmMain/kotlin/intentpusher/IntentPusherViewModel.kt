@@ -6,17 +6,17 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import shellcommands.ShellCommandExecutor
+import shellcommands.AdbCommandExecutor
 
 class IntentPusherViewModel(
-    private val shellCommandExecutor: ShellCommandExecutor
+    private val adbCommandExecutor: AdbCommandExecutor
 ) {
 
     private val _viewStates = MutableStateFlow<IntentPusherViewState>(IntentPusherViewState.WaitForUserInput)
     val viewStates: StateFlow<IntentPusherViewState>
         get() = _viewStates.asStateFlow()
 
-    var inputPath by mutableStateOf(ShellCommandExecutor.DEFAULT_ADB_PATH)
+    var inputPath by mutableStateOf(AdbCommandExecutor.DEFAULT_ADB_PATH)
         private set
 
     var inputPackageName by mutableStateOf("")
@@ -38,7 +38,7 @@ class IntentPusherViewModel(
     }
 
     fun clearFields() {
-        inputPath = ShellCommandExecutor.DEFAULT_ADB_PATH
+        inputPath = AdbCommandExecutor.DEFAULT_ADB_PATH
         inputPackageName = ""
         inputContent = ""
     }
@@ -49,7 +49,7 @@ class IntentPusherViewModel(
             return
         }
 
-        shellCommandExecutor.sendDeeplink(
+        adbCommandExecutor.sendDeeplink(
             inputPath,
             inputPackageName,
             inputContent

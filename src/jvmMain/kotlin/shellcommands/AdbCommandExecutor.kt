@@ -5,17 +5,20 @@ import container.TaskResult
 import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import utils.OsPlatform
 import utils.StreamGobbler
 import utils.SystemChecker
 
 fun main() {
-    val shellCommandExecutor = ShellCommandExecutor(SystemChecker())
-    shellCommandExecutor.sendDeeplink(inputPackageName = "", inputContent = "https://taiwan-ebook-lover.github.io/searches/mA8m91o8ylnY9hIGzQDL")
+    val adbCommandExecutor = AdbCommandExecutor(
+        SystemChecker(),
+        CommandBuilder()
+    )
+    adbCommandExecutor.sendDeeplink(inputPackageName = "", inputContent = "https://taiwan-ebook-lover.github.io/searches/mA8m91o8ylnY9hIGzQDL")
 }
 
-class ShellCommandExecutor(
-    private val systemChecker: SystemChecker
+class AdbCommandExecutor(
+    private val systemChecker: SystemChecker,
+    private val commandBuilder: CommandBuilder
 ) {
 
     fun sendDeeplink(
@@ -37,8 +40,14 @@ class ShellCommandExecutor(
             return TaskResult.Failed(CommandExecutorException("Only Support Mac, currently"))
         }
 
+        val deepLinkCommand = commandBuilder.buildCommand(
+            adbPath,
+            inputPackageName,
+            inputContent
+        )
+
         try {
-            val exitCode = executeCommand(adbPath, inputPackageName, inputContent)
+            val exitCode = executeCommand(deepLinkCommand)
             if (exitCode == CODE_COMMAND_NOT_FOUND) {
                 return TaskResult.Failed(CommandExecutorException("Command not found."))
             } else if (exitCode == CODE_EXITED_WITH_SOME_ERROR) {
@@ -56,14 +65,10 @@ class ShellCommandExecutor(
     }
 
     @Throws(IOException::class)
-    private fun executeCommand(
-        adbPath: String,
-        packageName: String,
-        content: String
-    ): Int {
-        val builder = buildAdbProcess(adbPath, packageName, content)
+    private fun executeCommand(command: Command): Int {
+        val builder = ProcessBuilder()
+        builder.command(command.commands)
         println("command: ${builder.command().joinToString(" ")}")
-        
         val process = builder.start()
         val streamGobbler = StreamGobbler(process.inputStream) {
             println(it)
@@ -76,44 +81,12 @@ class ShellCommandExecutor(
         return exitCode
     }
 
-    private fun buildAdbProcess(
-        adbPath: String,
-        packageName: String,
-        content: String
-    ): ProcessBuilder {
-        // sample: adb shell am start -a android.intent.action.VIEW -d "your-link" com.myapp
-        val shellCommands = mutableListOf(
-            "am",
-            "start",
-            "-a",
-            "android.intent.action.VIEW",
-            "-d",
-            "\"$content\"",
-        )
-
-        if (packageName.isNotBlank()) {
-            shellCommands.add(packageName)
-        }
-
-        val adbCommands = listOf(
-            adbPath,
-            "shell",
-            "\'${shellCommands.joinToString(" ")}\'"
-        )
-
-        val processBuilder = ProcessBuilder()
-        processBuilder.command(
-            "sh",
-            "-c",
-            adbCommands.joinToString(" "),
-        )
-        return processBuilder
-    }
-
+    @JvmInline
+    value class Command(val commands: List<String>)
     class CommandExecutorException(message: String) : Throwable(message)
 
     companion object {
-        private const val DEFAULT_ADB_PATH = "~/Library/Android/sdk/platform-tools/adb"
+        const val DEFAULT_ADB_PATH = "~/Library/Android/sdk/platform-tools/adb"
         private const val CODE_EXITED_WITH_SOME_ERROR = 1
         private const val CODE_COMMAND_NOT_FOUND = 127
     }
