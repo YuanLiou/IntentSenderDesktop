@@ -26,7 +26,7 @@ class AdbCommandExecutor(
             return TaskResult.Failed(CommandExecutorException("Only Support Mac, currently"))
         }
 
-        val deepLinkCommand = commandBuilder.buildCommand(
+        val deepLinkCommand = commandBuilder.buildDeepLinkCommand(
             inputPath,
             inputPackageName,
             inputContent

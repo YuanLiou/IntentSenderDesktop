@@ -7,7 +7,7 @@ class CommandBuilder(
     private val systemChecker: SystemChecker
 ) {
 
-    fun buildCommand(
+    fun buildDeepLinkCommand(
         adbPath: String,
         packageName: String,
         content: String
