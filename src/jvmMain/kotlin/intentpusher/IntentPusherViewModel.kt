@@ -7,10 +7,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class IntentPusherViewModel {
+class IntentPusherViewModel(
+    private val shellCommandExecutor: ShellCommandExecutor
+) {
 
-    private val _viewStates = MutableStateFlow<IntentPusherViewState?>(null)
-    val viewStates: StateFlow<IntentPusherViewState?>
+    private val _viewStates = MutableStateFlow<IntentPusherViewState>(IntentPusherViewState.WaitForUserInput)
+    val viewStates: StateFlow<IntentPusherViewState>
         get() = _viewStates.asStateFlow()
 
     var inputPath by mutableStateOf("")
@@ -41,13 +43,40 @@ class IntentPusherViewModel {
     }
 
     fun showSendMessage() {
-        _viewStates.value = IntentPusherViewState.ShowDialog(
-            title = "Sample Dialog",
-            message = "Hello world"
+        if (inputContent.isBlank()) {
+            showDialog(ERROR_TITLE, "input content is empty")
+            return
+        }
+
+        shellCommandExecutor.sendDeeplink(
+            inputPath,
+            inputPackageName,
+            inputContent
+        ).fold(
+            onSuccess = {
+                showDialog("Success", "Message is $it")
+            },
+            onFailure = {
+                val errorMessage = it.message
+                if (errorMessage?.isNotEmpty() == true) {
+                    showDialog(ERROR_TITLE, errorMessage)
+                }
+            }
         )
     }
 
     fun dismissDialog() {
         _viewStates.value = IntentPusherViewState.WaitForUserInput
+    }
+
+    private fun showDialog(title: String, message: String) {
+        _viewStates.value = IntentPusherViewState.ShowDialog(
+            title = title,
+            message = message
+        )
+    }
+
+    companion object {
+        private const val ERROR_TITLE = "Error"
     }
 }

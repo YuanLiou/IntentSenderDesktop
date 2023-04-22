@@ -1,6 +1,7 @@
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import intentpusher.IntentPusherViewModel
+import intentpusher.ShellCommandExecutor
 
 fun main() = application {
     Window(
@@ -8,7 +9,9 @@ fun main() = application {
         onCloseRequest = ::exitApplication
     ) {
         MainScreen(
-            viewModel = IntentPusherViewModel(),
+            viewModel = IntentPusherViewModel(
+                ShellCommandExecutor()
+            ),
             topPadding = 16,
             endPadding = 12
         )
