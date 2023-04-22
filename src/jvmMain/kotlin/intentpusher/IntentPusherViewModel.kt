@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import shellcommands.ShellCommandExecutor
 
 class IntentPusherViewModel(
     private val shellCommandExecutor: ShellCommandExecutor

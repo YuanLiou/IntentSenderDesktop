@@ -1,4 +1,4 @@
-package intentpusher
+package shellcommands
 
 import container.SimpleResult
 import container.TaskResult
@@ -49,7 +49,7 @@ class ShellCommandExecutor {
             return TaskResult.Failed(ioException)
         }
 
-        return TaskResult.Success("success")
+        return TaskResult.Success("Intent has sent")
     }
 
     @Throws(IOException::class)

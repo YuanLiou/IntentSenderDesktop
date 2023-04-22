@@ -1,7 +1,7 @@
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import intentpusher.IntentPusherViewModel
-import intentpusher.ShellCommandExecutor
+import shellcommands.ShellCommandExecutor
 
 fun main() = application {
     Window(
