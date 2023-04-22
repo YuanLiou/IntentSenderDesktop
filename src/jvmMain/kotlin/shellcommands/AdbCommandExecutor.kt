@@ -10,11 +10,11 @@ import utils.SystemChecker
 
 class AdbCommandExecutor(
     private val systemChecker: SystemChecker,
-    private val commandBuilder: CommandBuilder
+    val commandBuilder: CommandBuilder
 ) {
 
     fun sendDeeplink(
-        inputPath: String = DEFAULT_ADB_PATH,
+        inputPath: String = commandBuilder.lookUpAdbPath(),
         inputPackageName: String,
         inputContent: String
     ): SimpleResult<String> {
@@ -22,18 +22,12 @@ class AdbCommandExecutor(
             return TaskResult.Failed(CommandExecutorException("content data is empty."))
         }
 
-        val adbPath = if (inputPath.isBlank()) {
-            DEFAULT_ADB_PATH
-        } else {
-            inputPath
-        }
-
         if (!systemChecker.isMac()) {
             return TaskResult.Failed(CommandExecutorException("Only Support Mac, currently"))
         }
 
         val deepLinkCommand = commandBuilder.buildCommand(
-            adbPath,
+            inputPath,
             inputPackageName,
             inputContent
         )
@@ -48,6 +42,7 @@ class AdbCommandExecutor(
         } catch (ioException: IOException) {
             ioException.printStackTrace()
             if (ioException.message?.contains("error=2") == true) {
+                val adbPath = commandBuilder.lookUpAdbPath()
                 return TaskResult.Failed(CommandExecutorException("Cannot run program \"$adbPath\": No such file or directory"))
             }
             return TaskResult.Failed(ioException)
@@ -78,7 +73,6 @@ class AdbCommandExecutor(
     class CommandExecutorException(message: String) : Throwable(message)
 
     companion object {
-        const val DEFAULT_ADB_PATH = "~/Library/Android/sdk/platform-tools/adb"
         private const val CODE_EXITED_WITH_SOME_ERROR = 1
         private const val CODE_COMMAND_NOT_FOUND = 127
     }
