@@ -33,6 +33,9 @@ class ShellCommandExecutor {
             executeCommand(adbPath, inputPackageName, inputContent)
         } catch (ioException: IOException) {
             ioException.printStackTrace()
+            if (ioException.message?.contains("error=2") == true) {
+                return TaskResult.Failed(CommandExecutorException("Cannot run program \"$adbPath\": No such file or directory"))
+            }
             return TaskResult.Failed(ioException)
         }
 
