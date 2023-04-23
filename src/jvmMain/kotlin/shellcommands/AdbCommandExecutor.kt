@@ -6,16 +6,15 @@ import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import utils.StreamGobbler
+import utils.SystemChecker
 
-fun main() {
-    val shellCommandExecutor = ShellCommandExecutor()
-    shellCommandExecutor.sendDeeplink(inputPackageName = "", inputContent = "https://taiwan-ebook-lover.github.io/searches/mA8m91o8ylnY9hIGzQDL")
-}
-
-class ShellCommandExecutor {
+class AdbCommandExecutor(
+    private val systemChecker: SystemChecker,
+    val commandBuilder: CommandBuilder
+) {
 
     fun sendDeeplink(
-        inputPath: String = DEFAULT_ADB_PATH,
+        inputPath: String = commandBuilder.lookUpAdbPath(),
         inputPackageName: String,
         inputContent: String
     ): SimpleResult<String> {
@@ -23,19 +22,18 @@ class ShellCommandExecutor {
             return TaskResult.Failed(CommandExecutorException("content data is empty."))
         }
 
-        val adbPath = if (inputPath.isBlank()) {
-            DEFAULT_ADB_PATH
-        } else {
-            inputPath
-        }
-
-        val osName = System.getProperty("os.name").lowercase()
-        if (!osName.startsWith("mac")) {
+        if (!systemChecker.isMac()) {
             return TaskResult.Failed(CommandExecutorException("Only Support Mac, currently"))
         }
 
+        val deepLinkCommand = commandBuilder.buildDeepLinkCommand(
+            inputPath,
+            inputPackageName,
+            inputContent
+        )
+
         try {
-            val exitCode = executeCommand(adbPath, inputPackageName, inputContent)
+            val exitCode = executeCommand(deepLinkCommand)
             if (exitCode == CODE_COMMAND_NOT_FOUND) {
                 return TaskResult.Failed(CommandExecutorException("Command not found."))
             } else if (exitCode == CODE_EXITED_WITH_SOME_ERROR) {
@@ -44,6 +42,7 @@ class ShellCommandExecutor {
         } catch (ioException: IOException) {
             ioException.printStackTrace()
             if (ioException.message?.contains("error=2") == true) {
+                val adbPath = commandBuilder.lookUpAdbPath()
                 return TaskResult.Failed(CommandExecutorException("Cannot run program \"$adbPath\": No such file or directory"))
             }
             return TaskResult.Failed(ioException)
@@ -53,14 +52,10 @@ class ShellCommandExecutor {
     }
 
     @Throws(IOException::class)
-    private fun executeCommand(
-        adbPath: String,
-        packageName: String,
-        content: String
-    ): Int {
-        val builder = buildAdbProcess(adbPath, packageName, content)
+    private fun executeCommand(command: Command): Int {
+        val builder = ProcessBuilder()
+        builder.command(command.commands)
         println("command: ${builder.command().joinToString(" ")}")
-        
         val process = builder.start()
         val streamGobbler = StreamGobbler(process.inputStream) {
             println(it)
@@ -73,44 +68,11 @@ class ShellCommandExecutor {
         return exitCode
     }
 
-    private fun buildAdbProcess(
-        adbPath: String,
-        packageName: String,
-        content: String
-    ): ProcessBuilder {
-        // sample: adb shell am start -a android.intent.action.VIEW -d "your-link" com.myapp
-        val shellCommands = mutableListOf(
-            "am",
-            "start",
-            "-a",
-            "android.intent.action.VIEW",
-            "-d",
-            "\"$content\"",
-        )
-
-        if (packageName.isNotBlank()) {
-            shellCommands.add(packageName)
-        }
-
-        val adbCommands = listOf(
-            adbPath,
-            "shell",
-            "\'${shellCommands.joinToString(" ")}\'"
-        )
-
-        val processBuilder = ProcessBuilder()
-        processBuilder.command(
-            "sh",
-            "-c",
-            adbCommands.joinToString(" "),
-        )
-        return processBuilder
-    }
-
+    @JvmInline
+    value class Command(val commands: List<String>)
     class CommandExecutorException(message: String) : Throwable(message)
 
     companion object {
-        private const val DEFAULT_ADB_PATH = "~/Library/Android/sdk/platform-tools/adb"
         private const val CODE_EXITED_WITH_SOME_ERROR = 1
         private const val CODE_COMMAND_NOT_FOUND = 127
     }
