@@ -22,10 +22,6 @@ class AdbCommandExecutor(
             return TaskResult.Failed(CommandExecutorException("content data is empty."))
         }
 
-        if (!systemChecker.isMac()) {
-            return TaskResult.Failed(CommandExecutorException("Only Support Mac, currently"))
-        }
-
         val deepLinkCommand = commandBuilder.buildDeepLinkCommand(
             inputPath,
             inputPackageName,

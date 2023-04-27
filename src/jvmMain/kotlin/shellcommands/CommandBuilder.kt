@@ -26,15 +26,20 @@ class CommandBuilder(
             shellCommands.add(packageName)
         }
 
+        val shellParameters = when (systemChecker.checkSystem()) {
+            OsPlatform.WINDOWS -> shellCommands.joinToString(" ")
+            else -> "\'${shellCommands.joinToString(" ")}\'"
+        }
+
         val adbCommands = buildAdbCommand(
             adbPath,
-            "shell", "\'${shellCommands.joinToString(" ")}\'"
+            "shell", shellParameters
         )
 
-        val exetutorCommand = lookUpExetutorCommand().toMutableList().apply {
+        val executorCommand = lookUpExecutorCommand().toMutableList().apply {
             add(adbCommands.joinToString(" "))
         }
-        return AdbCommandExecutor.Command(exetutorCommand)
+        return AdbCommandExecutor.Command(executorCommand)
     }
 
     private fun buildAdbCommand(adbPath: String, vararg adbCommands: String): List<String> {
@@ -45,7 +50,7 @@ class CommandBuilder(
         return finalCommandList
     }
 
-    private fun lookUpExetutorCommand(): List<String> {
+    private fun lookUpExecutorCommand(): List<String> {
         return when (systemChecker.checkSystem()) {
             OsPlatform.MAC, OsPlatform.LINUX -> listOf("sh", "-c")
             OsPlatform.WINDOWS -> listOf("cmd.exe", "/c")
@@ -54,16 +59,18 @@ class CommandBuilder(
     }
 
     fun lookUpAdbPath(inputPath: String = ""): String {
-        val adbPath = if (inputPath.isBlank()) {
-            // TODO:: return by different os platforms
-            CommandBuilder.DEFAULT_ADB_PATH_MACOS
-        } else {
-            inputPath
+        val adbPath = inputPath.ifBlank {
+            when (systemChecker.checkSystem()) {
+                OsPlatform.MAC, OsPlatform.LINUX -> DEFAULT_ADB_PATH_MACOS
+                OsPlatform.WINDOWS -> DEFAULT_ADB_PATH_WINDOWS
+                OsPlatform.OTHER -> ""
+            }
         }
         return adbPath
     }
 
     companion object {
         private const val DEFAULT_ADB_PATH_MACOS = "~/Library/Android/sdk/platform-tools/adb"
+        private const val DEFAULT_ADB_PATH_WINDOWS = "%LOCALAPPDATA%\\Android\\sdk\\platform-tools\\adb.exe"
     }
 }

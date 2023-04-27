@@ -58,8 +58,8 @@ class IntentPusherViewModel(
             inputPackageName,
             inputContent
         ).fold(
-            onSuccess = {
-                showDialog("Success", "Message is $it")
+            onSuccess = { message ->
+                showDialog("Success", message)
             },
             onFailure = {
                 val errorMessage = it.message
