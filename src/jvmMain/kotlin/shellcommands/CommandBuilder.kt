@@ -12,7 +12,7 @@ class CommandBuilder(
         adbPath: String,
         packageName: String,
         content: String
-    ): AdbCommandExecutor.Command {
+    ): Command {
         // sample: adb shell am start -a android.intent.action.VIEW -d "your-link" com.myapp
         val shellCommands = mutableListOf(
             "am",
@@ -40,7 +40,7 @@ class CommandBuilder(
         val executorCommand = lookUpExecutorCommand().toMutableList().apply {
             add(adbCommands.joinToString(" "))
         }
-        return AdbCommandExecutor.Command(executorCommand)
+        return Command(executorCommand)
     }
 
     private fun buildAdbCommand(adbPath: String, vararg adbCommands: String): List<String> {

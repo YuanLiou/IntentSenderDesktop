@@ -1,12 +1,7 @@
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import intentpusher.IntentPusherViewModel
 import intentpusher.IntentPusherScreen
-import shellcommands.CommandBuilder
-import shellcommands.AdbCommandExecutor
-import shellcommands.AdbPathHelper
-import usecase.SendDeepLink
-import utils.SystemChecker
+import intentpusher.IntentPusherViewModel
 
 fun main() = application {
     Window(

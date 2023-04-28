@@ -42,7 +42,7 @@ class CommandBuilderTest {
         // Then
         val expectedCommand = "sh -c test/path/adb shell 'am start -a android.intent.action.VIEW -d \"Hello Test\" com.myapp'"
         Truth.assertThat(command.commands).isNotEmpty()
-        Truth.assertThat(command.commands.joinToString(" "))
+        Truth.assertThat(command.getFullCommand())
             .isEqualTo(expectedCommand)
     }
 
@@ -64,7 +64,7 @@ class CommandBuilderTest {
         // Then
         val expectedCommand = "cmd.exe /c C:\\test\\mypath\\adb.exe shell am start -a android.intent.action.VIEW -d \"Hello Test\" com.myapp"
         Truth.assertThat(command.commands).isNotEmpty()
-        Truth.assertThat(command.commands.joinToString(" "))
+        Truth.assertThat(command.getFullCommand())
             .isEqualTo(expectedCommand)
     }
 }
