@@ -3,6 +3,8 @@ import androidx.compose.ui.window.application
 import intentpusher.IntentPusherViewModel
 import shellcommands.CommandBuilder
 import shellcommands.AdbCommandExecutor
+import shellcommands.AdbPathHelper
+import usecase.SendDeepLink
 import utils.SystemChecker
 
 fun main() = application {
@@ -12,13 +14,19 @@ fun main() = application {
     ) {
         MainScreen(
             viewModel = IntentPusherViewModel(
-                AdbCommandExecutor(
-                    SystemChecker(),
-                    CommandBuilder(SystemChecker())
-                )
+                SendDeepLink(
+                    AdbCommandExecutor(),
+                    CommandBuilder(
+                        SystemChecker(),
+                        AdbPathHelper(SystemChecker())
+                    )
+                ),
+                AdbPathHelper(SystemChecker())
             ),
             topPadding = 16,
             endPadding = 12
         )
     }
 }
+
+
