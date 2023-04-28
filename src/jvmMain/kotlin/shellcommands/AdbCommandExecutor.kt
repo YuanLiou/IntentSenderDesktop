@@ -43,8 +43,7 @@ class AdbCommandExecutor {
         val exitCode = waitFor()
         CommandResult(exitCode, output.await(), error.await())
     }
-    @JvmInline
-    value class Command(val commands: List<String>)
+
     class CommandExecutorException(message: String) : Throwable(message)
 
     companion object {

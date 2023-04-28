@@ -26,7 +26,14 @@ kotlin {
                 implementation("org.apache.commons:commons-lang3:3.12.0")
             }
         }
-        val jvmTest by getting
+        val jvmTest by getting {
+            dependencies {
+                implementation("io.mockk:mockk:1.13.5")
+                implementation("junit:junit:4.12")
+                implementation("com.google.truth:truth:1.1.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+            }
+        }
     }
 }
 

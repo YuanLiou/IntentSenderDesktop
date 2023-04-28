@@ -9,8 +9,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import shellcommands.AdbCommandExecutor
 import shellcommands.AdbPathHelper
+import shellcommands.CommandBuilder
 import usecase.SendDeepLink
+import utils.SystemChecker
 
 class IntentPusherViewModel(
     private val sendDeepLink: SendDeepLink,
@@ -89,5 +92,16 @@ class IntentPusherViewModel(
 
     companion object {
         private const val ERROR_TITLE = "Error"
+
+        fun create() = IntentPusherViewModel(
+            SendDeepLink(
+                AdbCommandExecutor(),
+                CommandBuilder(
+                    SystemChecker(),
+                    AdbPathHelper(SystemChecker())
+                )
+            ),
+            AdbPathHelper(SystemChecker())
+        )
     }
 }

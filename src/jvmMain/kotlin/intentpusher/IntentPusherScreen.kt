@@ -1,3 +1,5 @@
+package intentpusher
+
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,12 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import intentpusher.IntentPusherViewModel
-import intentpusher.IntentPusherViewState
 
 @Composable
-@Preview
-fun MainScreen(
+fun IntentPusherScreen(
     viewModel: IntentPusherViewModel,
     topPadding: Int = 0,
     endPadding: Int = 0
@@ -206,4 +205,16 @@ fun ShowDialog(
             onDismissRequest?.invoke()
         }
     )
+}
+
+@Composable
+@Preview()
+fun IntentPusherScreenPreview() {
+    MaterialTheme {
+        IntentPusherScreen(
+            IntentPusherViewModel.create(),
+            topPadding = 16,
+            endPadding = 12
+        )
+    }
 }
