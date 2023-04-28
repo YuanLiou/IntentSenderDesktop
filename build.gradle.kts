@@ -31,6 +31,7 @@ kotlin {
                 implementation("io.mockk:mockk:1.13.5")
                 implementation("junit:junit:4.12")
                 implementation("com.google.truth:truth:1.1.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
             }
         }
     }
