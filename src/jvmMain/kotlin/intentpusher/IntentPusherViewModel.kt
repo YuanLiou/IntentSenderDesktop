@@ -62,7 +62,9 @@ class IntentPusherViewModel(
         mainScope.launch {
             sendDeepLink(inputPath, inputPackageName, inputContent).fold(
                 onSuccess = {
-                    showDialog("Success", it.output)
+                    if (it.output.isNotEmpty()) {
+                        showDialog("Success", "Intent has sent")
+                    }
                 },
                 onFailure = {
                     val errorMessage = it.message
