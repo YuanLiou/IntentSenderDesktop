@@ -10,9 +10,11 @@ class AdbCommandExecutor {
         return try {
             val result = execute(command)
             if (result.exitCode == CODE_COMMAND_NOT_FOUND) {
-                throw CommandExecutorException("Command not found.")
+                val errorMessage = result.errorMessage.ifEmpty { "Command not found." }
+                throw CommandExecutorException(errorMessage)
             } else if (result.exitCode == CODE_EXITED_WITH_SOME_ERROR) {
-                throw CommandExecutorException("Exited with some error.")
+                val errorMessage = result.errorMessage.ifEmpty { "Exited with some error." }
+                throw CommandExecutorException(errorMessage)
             }
 
             result

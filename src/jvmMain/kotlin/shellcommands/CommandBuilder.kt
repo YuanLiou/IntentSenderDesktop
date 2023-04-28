@@ -8,6 +8,11 @@ class CommandBuilder(
     private val adbPathHelper: AdbPathHelper
 ) {
 
+    fun buildDevicesCommand(adbPath: String): Command {
+        val adbCommands = buildAdbCommand(adbPath, "devices")
+        return buildFinalExecutableCommand(adbCommands)
+    }
+
     fun buildDeepLinkCommand(
         adbPath: String,
         packageName: String,
@@ -38,6 +43,10 @@ class CommandBuilder(
             shellParameters
         )
 
+        return buildFinalExecutableCommand(adbCommands)
+    }
+
+    private fun buildFinalExecutableCommand(adbCommands: List<String>): Command {
         val executorCommand = lookUpExecutorCommand().toMutableList().apply {
             add(adbCommands.joinToString(" "))
         }

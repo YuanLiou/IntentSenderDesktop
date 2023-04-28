@@ -12,11 +12,14 @@ import kotlinx.coroutines.launch
 import shellcommands.AdbCommandExecutor
 import shellcommands.AdbPathHelper
 import shellcommands.CommandBuilder
+import usecase.GetDevices
 import usecase.SendDeepLink
+import utils.DeviceInfoParser
 import utils.SystemChecker
 
 class IntentPusherViewModel(
     private val sendDeepLink: SendDeepLink,
+    private val getDevices: GetDevices,
     private val adbPathHelper: AdbPathHelper
 ) {
 
@@ -63,6 +66,21 @@ class IntentPusherViewModel(
         }
 
         mainScope.launch {
+            // FIXME:: development only
+            getDevices(inputPath).fold(
+                onSuccess = {
+                    if (it.containsKey("device")) {
+                        println("Devices: ${it.get("device")?.joinToString(", ")}")
+                    }
+                },
+                onFailure = {
+                    val errorMessage = it.message
+                    if (errorMessage?.isNotEmpty() == true) {
+                        showDialog(ERROR_TITLE, errorMessage)
+                    }
+                }
+            )
+
             sendDeepLink(inputPath, inputPackageName, inputContent).fold(
                 onSuccess = {
                     if (it.output.isNotEmpty()) {
@@ -100,6 +118,14 @@ class IntentPusherViewModel(
                     SystemChecker(),
                     AdbPathHelper(SystemChecker())
                 )
+            ),
+            GetDevices(
+                AdbCommandExecutor(),
+                CommandBuilder(
+                    SystemChecker(),
+                    AdbPathHelper(SystemChecker())
+                ),
+                DeviceInfoParser()
             ),
             AdbPathHelper(SystemChecker())
         )
