@@ -3,67 +3,48 @@ package shellcommands
 import container.SimpleResult
 import container.TaskResult
 import java.io.IOException
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import utils.StreamGobbler
-import utils.SystemChecker
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
-class AdbCommandExecutor(
-    private val systemChecker: SystemChecker,
-    val commandBuilder: CommandBuilder
-) {
+class AdbCommandExecutor {
 
-    fun sendDeeplink(
-        inputPath: String = commandBuilder.lookUpAdbPath(),
-        inputPackageName: String,
-        inputContent: String
-    ): SimpleResult<String> {
-        if (inputContent.isEmpty()) {
-            return TaskResult.Failed(CommandExecutorException("content data is empty."))
-        }
-
-        val deepLinkCommand = commandBuilder.buildDeepLinkCommand(
-            inputPath,
-            inputPackageName,
-            inputContent
-        )
-
-        try {
-            val exitCode = executeCommand(deepLinkCommand)
-            if (exitCode == CODE_COMMAND_NOT_FOUND) {
-                return TaskResult.Failed(CommandExecutorException("Command not found."))
-            } else if (exitCode == CODE_EXITED_WITH_SOME_ERROR) {
-                return TaskResult.Failed(CommandExecutorException("Exited with some error."))
+    suspend fun executeCommand(command: Command, program: String?): CommandResult {
+        return try {
+            val result = execute(command)
+            if (result.exitCode == CODE_COMMAND_NOT_FOUND) {
+                throw CommandExecutorException("Command not found.")
+            } else if (result.exitCode == CODE_EXITED_WITH_SOME_ERROR) {
+                throw CommandExecutorException("Exited with some error.")
             }
+
+            result
         } catch (ioException: IOException) {
             ioException.printStackTrace()
             if (ioException.message?.contains("error=2") == true) {
-                val adbPath = commandBuilder.lookUpAdbPath()
-                return TaskResult.Failed(CommandExecutorException("Cannot run program \"$adbPath\": No such file or directory"))
+                throw CommandExecutorException("Cannot run program \"${program.orEmpty()}\": No such file or directory")
             }
-            return TaskResult.Failed(ioException)
+            throw ioException
         }
-
-        return TaskResult.Success("Intent has sent")
     }
 
     @Throws(IOException::class)
-    private fun executeCommand(command: Command): Int {
+    private suspend fun execute(command: Command): CommandResult {
         val builder = ProcessBuilder()
         builder.command(command.commands)
         println("command: ${builder.command().joinToString(" ")}")
         val process = builder.start()
-        val streamGobbler = StreamGobbler(process.inputStream) {
-            println(it)
-        }
-        val future = Executors.newSingleThreadExecutor().submit(streamGobbler)
-        // exitCode == 0, means we sent a success command
-        val exitCode = process.waitFor()
-        future.get(10, TimeUnit.SECONDS)
-        println("Exit code is $exitCode")
-        return exitCode
+        return process.gobbleStream()
     }
 
+    /*
+     * @return exitCode: Int, output: String, error: String
+     */
+    private suspend fun Process.gobbleStream() = coroutineScope {
+        val output = async { inputStream.bufferedReader().use { it.readText() } }
+        val error = async { errorStream.bufferedReader().use { it.readText() } }
+        val exitCode = waitFor()
+        CommandResult(exitCode, output.await(), error.await())
+    }
     @JvmInline
     value class Command(val commands: List<String>)
     class CommandExecutorException(message: String) : Throwable(message)

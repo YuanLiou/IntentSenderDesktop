@@ -4,7 +4,8 @@ import utils.OsPlatform
 import utils.SystemChecker
 
 class CommandBuilder(
-    private val systemChecker: SystemChecker
+    private val systemChecker: SystemChecker,
+    private val adbPathHelper: AdbPathHelper
 ) {
 
     fun buildDeepLinkCommand(
@@ -43,7 +44,7 @@ class CommandBuilder(
     }
 
     private fun buildAdbCommand(adbPath: String, vararg adbCommands: String): List<String> {
-        val finalCommandList = mutableListOf(lookUpAdbPath(inputPath = adbPath))
+        val finalCommandList = mutableListOf(adbPathHelper.lookUpAdbPath(inputPath = adbPath))
         for (command in adbCommands) {
             finalCommandList.add(command)
         }
@@ -56,21 +57,5 @@ class CommandBuilder(
             OsPlatform.WINDOWS -> listOf("cmd.exe", "/c")
             OsPlatform.OTHER -> emptyList()
         }
-    }
-
-    fun lookUpAdbPath(inputPath: String = ""): String {
-        val adbPath = inputPath.ifBlank {
-            when (systemChecker.checkSystem()) {
-                OsPlatform.MAC, OsPlatform.LINUX -> DEFAULT_ADB_PATH_MACOS
-                OsPlatform.WINDOWS -> DEFAULT_ADB_PATH_WINDOWS
-                OsPlatform.OTHER -> ""
-            }
-        }
-        return adbPath
-    }
-
-    companion object {
-        private const val DEFAULT_ADB_PATH_MACOS = "~/Library/Android/sdk/platform-tools/adb"
-        private const val DEFAULT_ADB_PATH_WINDOWS = "%LOCALAPPDATA%\\Android\\sdk\\platform-tools\\adb.exe"
     }
 }

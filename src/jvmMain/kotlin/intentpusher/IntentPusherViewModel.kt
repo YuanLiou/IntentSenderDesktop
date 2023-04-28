@@ -3,18 +3,24 @@ package intentpusher
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import shellcommands.AdbCommandExecutor
-import shellcommands.CommandBuilder
+import kotlinx.coroutines.launch
+import shellcommands.AdbPathHelper
+import usecase.SendDeepLink
 
 class IntentPusherViewModel(
-    private val adbCommandExecutor: AdbCommandExecutor
+    private val sendDeepLink: SendDeepLink,
+    private val adbPathHelper: AdbPathHelper
 ) {
 
+    private val mainScope = CoroutineScope(Dispatchers.Default)
+
     private val defaultAdbPath: String
-        get() = adbCommandExecutor.commandBuilder.lookUpAdbPath()
+        get() = adbPathHelper.lookUpAdbPath()
 
     private val _viewStates = MutableStateFlow<IntentPusherViewState>(IntentPusherViewState.WaitForUserInput)
     val viewStates: StateFlow<IntentPusherViewState>
@@ -53,21 +59,19 @@ class IntentPusherViewModel(
             return
         }
 
-        adbCommandExecutor.sendDeeplink(
-            inputPath,
-            inputPackageName,
-            inputContent
-        ).fold(
-            onSuccess = { message ->
-                showDialog("Success", message)
-            },
-            onFailure = {
-                val errorMessage = it.message
-                if (errorMessage?.isNotEmpty() == true) {
-                    showDialog(ERROR_TITLE, errorMessage)
+        mainScope.launch {
+            sendDeepLink(inputPath, inputPackageName, inputContent).fold(
+                onSuccess = {
+                    showDialog("Success", it.output)
+                },
+                onFailure = {
+                    val errorMessage = it.message
+                    if (errorMessage?.isNotEmpty() == true) {
+                        showDialog(ERROR_TITLE, errorMessage)
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     fun dismissDialog() {
