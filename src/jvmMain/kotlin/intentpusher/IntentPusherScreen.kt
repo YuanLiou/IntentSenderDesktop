@@ -117,7 +117,7 @@ private fun ActionButtons(
     endPadding: Int = 0,
     modifier: Modifier = Modifier,
     onSendButtonClicked: (() -> Unit)? = null,
-    onClearButtonClicked: (() -> Unit)? = null,
+    onClearButtonClicked: (() -> Unit)? = null
 ) {
     Box(
         contentAlignment = Alignment.CenterEnd,
@@ -191,7 +191,7 @@ fun ShowDialog(
         },
         text = {
             Text(message)
-        } ,
+        },
         confirmButton = {
             Button(
                 onClick = {

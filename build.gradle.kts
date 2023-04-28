@@ -1,8 +1,10 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose")
+    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
 }
 
 group = "com.rayliu"
@@ -45,5 +47,22 @@ compose.desktop {
             packageName = "IntentSender"
             packageVersion = "1.0.0"
         }
+    }
+}
+
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+    verbose.set(true)
+    android.set(false)
+    outputToConsole.set(true)
+    outputColorName.set("RED")
+    ignoreFailures.set(true)
+    disabledRules.set(setOf("import-ordering"))
+    reporters {
+        reporter(ReporterType.JSON)
+        reporter(ReporterType.HTML)
+    }
+    filter {
+        exclude("**/generated/**")
+        include("**/kotlin/**")
     }
 }

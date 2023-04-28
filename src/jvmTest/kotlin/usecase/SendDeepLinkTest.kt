@@ -14,6 +14,7 @@ class SendDeepLinkTest {
 
     @MockK
     lateinit var adbCommandExecutor: AdbCommandExecutor
+
     @MockK
     lateinit var commandBuilder: CommandBuilder
 

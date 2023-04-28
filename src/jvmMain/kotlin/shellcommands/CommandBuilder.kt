@@ -20,7 +20,7 @@ class CommandBuilder(
             "-a",
             "android.intent.action.VIEW",
             "-d",
-            "\"$content\"",
+            "\"$content\""
         )
 
         if (packageName.isNotBlank()) {
@@ -34,7 +34,8 @@ class CommandBuilder(
 
         val adbCommands = buildAdbCommand(
             adbPath,
-            "shell", shellParameters
+            "shell",
+            shellParameters
         )
 
         val executorCommand = lookUpExecutorCommand().toMutableList().apply {
