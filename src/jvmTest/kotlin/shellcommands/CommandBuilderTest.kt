@@ -13,6 +13,7 @@ class CommandBuilderTest {
 
     @MockK
     lateinit var systemChecker: SystemChecker
+
     @MockK
     lateinit var adbPathHelper: AdbPathHelper
 

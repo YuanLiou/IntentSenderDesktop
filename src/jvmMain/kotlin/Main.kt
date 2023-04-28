@@ -15,5 +15,3 @@ fun main() = application {
         )
     }
 }
-
-
