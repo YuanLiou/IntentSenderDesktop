@@ -69,9 +69,7 @@ class IntentPusherViewModel(
             // FIXME:: development only
             getDevices(inputPath).fold(
                 onSuccess = {
-                    if (it.containsKey("device")) {
-                        println("Devices: ${it.get("device")?.joinToString(", ")}")
-                    }
+                    println("Devices: ${it.joinToString(", ")}")
                 },
                 onFailure = {
                     val errorMessage = it.message

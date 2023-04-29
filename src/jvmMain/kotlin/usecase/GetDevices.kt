@@ -2,7 +2,6 @@ package usecase
 
 import shellcommands.AdbCommandExecutor
 import shellcommands.CommandBuilder
-import shellcommands.CommandResult
 import utils.DeviceInfoParser
 
 class GetDevices(
@@ -12,11 +11,15 @@ class GetDevices(
 ) {
     suspend operator fun invoke(
         adbPath: String
-    ): Result<Map<String, List<String>>> {
+    ): Result<List<String>> {
         val command = commandBuilder.buildDevicesCommand(adbPath)
         return runCatching {
             val commandResult = adbCommandExecutor.executeCommand(command, adbPath)
-            deviceInfoParser.parse(commandResult.output)
+            val deviceInfo = deviceInfoParser.parse(commandResult.output)
+            if (deviceInfo.containsKey("device")) {
+                return@runCatching deviceInfo.get("device").orEmpty()
+            }
+            emptyList()
         }
     }
 }
