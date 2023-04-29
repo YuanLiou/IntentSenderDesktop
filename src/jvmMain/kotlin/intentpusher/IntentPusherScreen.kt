@@ -23,16 +23,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ui.TextInputFields
 
 @Composable
 fun IntentPusherScreen(
     viewModel: IntentPusherViewModel,
     topPadding: Int = 0,
-    endPadding: Int = 0
+    endPadding: Int = 0,
+    modifier: Modifier = Modifier
 ) {
     MaterialTheme {
         Surface(
-            modifier = Modifier.padding(4.dp)
+            modifier = modifier.padding(4.dp)
         ) {
             // region ShowDialogs
             data class DialogInfo(val title: String, val message: String)
@@ -61,6 +63,8 @@ fun IntentPusherScreen(
                 )
             }
 
+            val titleWeight = 0.25f
+            val textInputWeight = 1f - titleWeight
             Column {
                 TextInputFields(
                     title = "adb Path",
@@ -69,6 +73,8 @@ fun IntentPusherScreen(
                     },
                     topPadding = topPadding,
                     endPadding = endPadding,
+                    titleWeight = titleWeight,
+                    textInputWeight = textInputWeight,
                     onTextFieldValueChanged = {
                         viewModel.updateInputPath(it)
                     }
@@ -81,6 +87,8 @@ fun IntentPusherScreen(
                     },
                     topPadding = topPadding,
                     endPadding = endPadding,
+                    titleWeight = titleWeight,
+                    textInputWeight = textInputWeight,
                     onTextFieldValueChanged = {
                         viewModel.updatePackageName(it)
                     }
@@ -92,6 +100,10 @@ fun IntentPusherScreen(
                     },
                     topPadding = topPadding,
                     endPadding = endPadding,
+                    titleWeight = titleWeight,
+                    textInputWeight = textInputWeight,
+                    singleLine = false,
+                    lines = 3,
                     onTextFieldValueChanged = {
                         viewModel.updateContent(it)
                     }
@@ -140,43 +152,6 @@ private fun ActionButtons(
     }
 }
 
-@Composable
-private fun TextInputFields(
-    title: String,
-    textFieldText: () -> String,
-    topPadding: Int = 0,
-    endPadding: Int = 12,
-    onTextFieldValueChanged: ((String) -> Unit)? = null,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier
-            .padding(top = topPadding.dp)
-            .fillMaxWidth()
-    ) {
-        Row(
-            modifier = modifier.fillMaxWidth()
-        ) {
-            Text(
-                title,
-                modifier = modifier.align(alignment = Alignment.CenterVertically)
-                    .padding(16.dp)
-            )
-            TextField(
-                value = textFieldText(),
-                onValueChange = {
-                    onTextFieldValueChanged?.invoke(it)
-                },
-                singleLine = true,
-                modifier = modifier
-                    .align(alignment = Alignment.CenterVertically)
-                    .fillMaxWidth()
-                    .padding(end = endPadding.dp)
-            )
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShowDialog(
@@ -217,4 +192,13 @@ fun IntentPusherScreenPreview() {
             endPadding = 12
         )
     }
+}
+
+@Preview
+@Composable
+fun ActionButtonsPreview() {
+    ActionButtons(
+        topPadding = 4,
+        endPadding = 4
+    )
 }
