@@ -37,12 +37,13 @@ import kotlinx.collections.immutable.toImmutableList
 fun SpinnerDropdown(
     title: String,
     subtitle: String,
+    selectedValue: String,
     topPadding: Int = 0,
     endPadding: Int = 12,
     titleWeight: Float,
     dropdownMenuWeight: Float,
     menuitems: ImmutableList<String>,
-    onDropDownItemClicked: ((String) -> Unit)? = null,
+    onDropDownItemSelected: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -59,16 +60,24 @@ fun SpinnerDropdown(
                     .weight(titleWeight)
                     .padding(16.dp)
             )
+
+            val boxedSpinnerTitle = if (menuitems.isEmpty()) {
+                "Connect a device"
+            } else {
+                subtitle
+            }
+
             Box(
                 contentAlignment = Alignment.CenterStart,
                 modifier = modifier
                     .weight(dropdownMenuWeight)
             ) {
                 BoxedDropdownMenu(
-                    label = subtitle,
+                    label = boxedSpinnerTitle,
                     menuitems = menuitems,
+                    selectedValue = selectedValue,
                     endPadding = endPadding,
-                    onDropDownItemClicked = onDropDownItemClicked,
+                    onDropDownItemSelected = onDropDownItemSelected,
                     modifier = modifier
                 )
             }
@@ -79,22 +88,21 @@ fun SpinnerDropdown(
 @Composable
 private fun BoxedDropdownMenu(
     label: String,
+    selectedValue: String,
     menuitems: ImmutableList<String>,
-    isEnabled: Boolean = true,
     endPadding: Int = 12,
-    onDropDownItemClicked: ((String) -> Unit)? = null,
+    onDropDownItemSelected: ((String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Box {
         var expander by remember { mutableStateOf(false) }
-        var selectedValue by remember { mutableStateOf("") }
         BoxedInputText(
             label = label,
             selectedValue = selectedValue,
             endPadding = endPadding,
             isExpandDropdownMenu = expander,
             onBoxedShapeClicked = { expander = true },
-            isEnabled = isEnabled,
+            isEnabled = menuitems.isNotEmpty(),
             modifier = modifier
         )
         DropdownMenu(
@@ -106,8 +114,7 @@ private fun BoxedDropdownMenu(
             menuitems.forEachIndexed { _, itemTitle ->
                 DropdownMenuItem(
                     onClick = {
-                        selectedValue = itemTitle
-                        onDropDownItemClicked?.invoke(itemTitle)
+                        onDropDownItemSelected?.invoke(itemTitle)
                         expander = false
                     }
                 ) {
@@ -136,7 +143,7 @@ private fun BoxedInputText(
         OutlinedTextField(
             label = { Text(text = label) },
             value = selectedValue,
-            enabled = true,
+            enabled = isEnabled,
             trailingIcon = {
                 val icon = if (isExpandDropdownMenu) {
                     Icons.Filled.KeyboardArrowUp
@@ -173,6 +180,7 @@ fun SpinnerDropdownPreview() {
         SpinnerDropdown(
             title = "Hello Dropdown",
             subtitle = "devices",
+            selectedValue = "",
             topPadding = 4,
             endPadding = 4,
             titleWeight = 0.25f,
@@ -188,6 +196,7 @@ fun IntentSenderDropdownMenuPreview() {
     Box(modifier = Modifier.background(Color.White)) {
         BoxedDropdownMenu(
             label = "Devices",
+            selectedValue = "",
             endPadding = 4,
             menuitems = listOf("22141FDEE000TW", "emulator-5554").toImmutableList()
         )

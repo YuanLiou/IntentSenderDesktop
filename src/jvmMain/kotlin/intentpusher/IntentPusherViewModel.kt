@@ -41,6 +41,10 @@ class IntentPusherViewModel(
     var inputContent by mutableStateOf("")
         private set
 
+    var connectedDevices by mutableStateOf(listOf(""))
+        private set
+    var selectedDevice by mutableStateOf("")
+
     fun updateInputPath(inputPath: String) {
         this.inputPath = inputPath
     }
@@ -66,19 +70,6 @@ class IntentPusherViewModel(
         }
 
         mainScope.launch {
-            // FIXME:: development only
-            getDevices(inputPath).fold(
-                onSuccess = {
-                    println("Devices: ${it.joinToString(", ")}")
-                },
-                onFailure = {
-                    val errorMessage = it.message
-                    if (errorMessage?.isNotEmpty() == true) {
-                        showDialog(ERROR_TITLE, errorMessage)
-                    }
-                }
-            )
-
             sendDeepLink(inputPath, inputPackageName, inputContent).fold(
                 onSuccess = {
                     if (it.output.isNotEmpty()) {
@@ -104,6 +95,32 @@ class IntentPusherViewModel(
             title = title,
             message = message
         )
+    }
+
+    fun refreshDevices() {
+        mainScope.launch {
+            getDevices(inputPath).fold(
+                onSuccess = { devices ->
+                    if (devices.isEmpty()) {
+                        selectedDevice = ""
+                        return@fold
+                    }
+
+                    devices.firstOrNull()?.let { firstDevice ->
+                        if (!devices.contains(selectedDevice)) {
+                            selectedDevice = firstDevice
+                        }
+                    }
+                    connectedDevices = devices
+                },
+                onFailure = {
+                    val errorMessage = it.message
+                    if (errorMessage?.isNotEmpty() == true) {
+                        showDialog(ERROR_TITLE, errorMessage)
+                    }
+                }
+            )
+        }
     }
 
     companion object {

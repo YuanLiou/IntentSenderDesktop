@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.onClick
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
@@ -15,6 +14,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,6 +65,10 @@ fun IntentPusherScreen(
                 )
             }
 
+            LaunchedEffect(true) {
+                viewModel.refreshDevices()
+            }
+
             val titleWeight = 0.25f
             val textInputWeight = 1f - titleWeight
             Column {
@@ -103,8 +107,10 @@ fun IntentPusherScreen(
                     endPadding = endPadding,
                     titleWeight = titleWeight,
                     dropdownMenuWeight = textInputWeight,
-                    menuitems = listOf("AAA", "BBB").toImmutableList(),
-                    onDropDownItemClicked = {
+                    menuitems = viewModel.connectedDevices.toImmutableList(),
+                    selectedValue = viewModel.selectedDevice,
+                    onDropDownItemSelected = { deviceName ->
+                        viewModel.selectedDevice = deviceName
                     }
                 )
 
