@@ -36,6 +36,7 @@ class CommandBuilderTest {
         // When
         val command = commandBuilder.buildDeepLinkCommand(
             adbPath = "",
+            deviceName = "",
             packageName = "com.myapp",
             content = "Hello Test"
         )
@@ -58,6 +59,7 @@ class CommandBuilderTest {
         // When
         val command = commandBuilder.buildDeepLinkCommand(
             adbPath = "",
+            deviceName = null,
             packageName = "com.myapp",
             content = "Hello Test"
         )

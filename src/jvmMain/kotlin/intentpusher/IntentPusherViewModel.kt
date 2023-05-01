@@ -43,7 +43,7 @@ class IntentPusherViewModel(
 
     var connectedDevices by mutableStateOf(listOf(""))
         private set
-    var selectedDevice by mutableStateOf("")
+    var selectedDevice: String? by mutableStateOf(null)
 
     fun updateInputPath(inputPath: String) {
         this.inputPath = inputPath
@@ -70,7 +70,12 @@ class IntentPusherViewModel(
         }
 
         mainScope.launch {
-            sendDeepLink(inputPath, inputPackageName, inputContent).fold(
+            sendDeepLink(
+                inputPath,
+                selectedDevice,
+                inputPackageName,
+                inputContent
+            ).fold(
                 onSuccess = {
                     if (it.output.isNotEmpty()) {
                         showDialog("Success", "Intent has sent")
@@ -102,7 +107,7 @@ class IntentPusherViewModel(
             getDevices(inputPath).fold(
                 onSuccess = { devices ->
                     if (devices.isEmpty()) {
-                        selectedDevice = ""
+                        selectedDevice = null
                         return@fold
                     }
 

@@ -35,7 +35,12 @@ class SendDeepLinkTest {
         val testContent = ""
 
         // When
-        val result = sendDeepLink(testPath, testPackageName, testContent)
+        val result = sendDeepLink(
+            testPath,
+            null,
+            testPackageName,
+            testContent
+        )
 
         // Then
         Truth.assertThat(result.isFailure).isTrue()

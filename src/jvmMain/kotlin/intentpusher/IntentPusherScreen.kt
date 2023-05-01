@@ -108,7 +108,7 @@ fun IntentPusherScreen(
                     titleWeight = titleWeight,
                     dropdownMenuWeight = textInputWeight,
                     menuitems = viewModel.connectedDevices.toImmutableList(),
-                    selectedValue = viewModel.selectedDevice,
+                    selectedValue = viewModel.selectedDevice.orEmpty(),
                     onDropDownItemSelected = { deviceName ->
                         viewModel.selectedDevice = deviceName
                     }
