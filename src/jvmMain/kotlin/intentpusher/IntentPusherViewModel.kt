@@ -90,6 +90,10 @@ class IntentPusherViewModel(
                     val errorMessage = it.message
                     if (errorMessage?.isNotEmpty() == true) {
                         showDialog(ERROR_TITLE, errorMessage)
+
+                        if (errorMessage.contains("device") && errorMessage.contains("not found")) {
+                            refreshDevices()
+                        }
                     }
                 }
             )
