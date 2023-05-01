@@ -70,4 +70,44 @@ class CommandBuilderTest {
         Truth.assertThat(command.getFullCommand())
             .isEqualTo(expectedCommand)
     }
+
+    @Test
+    fun buildDeepLinkCommandOnMacWithDevice() {
+        // expected: sh -c test/path/adb -s testdevice shell 'am start -a android.intent.action.VIEW -d "Hello Test 02" com.myapp'
+
+        // Given
+        every { adbPathHelper.lookUpAdbPath() } returns "test/path/adb"
+        every { systemChecker.checkSystem() } returns OsPlatform.MAC
+
+        // When
+        val command = commandBuilder.buildDeepLinkCommand(
+            adbPath = "",
+            deviceName = "testdevice",
+            packageName = "com.myapp",
+            content = "Hello Test 02"
+        )
+
+        // Then
+        val expectedCommand = "sh -c test/path/adb -s testdevice shell 'am start -a android.intent.action.VIEW -d \"Hello Test 02\" com.myapp'"
+        Truth.assertThat(command.commands).isNotEmpty()
+        Truth.assertThat(command.getFullCommand())
+            .isEqualTo(expectedCommand)
+    }
+
+    @Test
+    fun buildDeviceCommandOnMac() {
+        // expected: sh -c test/path/adb devices
+        // Given
+        every { adbPathHelper.lookUpAdbPath() } returns "test/path/adb"
+        every { systemChecker.checkSystem() } returns OsPlatform.MAC
+
+        // When
+        val command = commandBuilder.buildDevicesCommand("")
+
+        // Then
+        val expectedCommand = "sh -c test/path/adb devices"
+        Truth.assertThat(command.commands).isNotEmpty()
+        Truth.assertThat(command.getFullCommand())
+            .isEqualTo(expectedCommand)
+    }
 }

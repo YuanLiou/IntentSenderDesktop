@@ -41,7 +41,7 @@ class IntentPusherViewModel(
     var inputContent by mutableStateOf("")
         private set
 
-    var connectedDevices by mutableStateOf(listOf(""))
+    var connectedDevices by mutableStateOf(listOf<String>())
         private set
     var selectedDevice: String? by mutableStateOf(null)
 
@@ -66,6 +66,11 @@ class IntentPusherViewModel(
     fun showSendMessage() {
         if (inputContent.isBlank()) {
             showDialog(ERROR_TITLE, "input content is empty")
+            return
+        }
+
+        if (selectedDevice.isNullOrEmpty()) {
+            showDialog(ERROR_TITLE, "no devices connected")
             return
         }
 
@@ -108,7 +113,6 @@ class IntentPusherViewModel(
                 onSuccess = { devices ->
                     if (devices.isEmpty()) {
                         selectedDevice = null
-                        return@fold
                     }
 
                     devices.firstOrNull()?.let { firstDevice ->

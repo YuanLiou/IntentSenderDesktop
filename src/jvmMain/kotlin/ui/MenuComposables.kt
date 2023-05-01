@@ -132,7 +132,7 @@ private fun BoxedInputText(
     isExpandDropdownMenu: Boolean,
     endPadding: Int = 0,
     onBoxedShapeClicked: (() -> Unit)? = null,
-    isEnabled: Boolean = true,
+    isEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     Box(
