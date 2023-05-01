@@ -26,6 +26,7 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation("org.apache.commons:commons-lang3:3.12.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
             }
         }
         val jvmTest by getting {

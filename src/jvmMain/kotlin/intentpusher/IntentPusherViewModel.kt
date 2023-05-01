@@ -12,11 +12,14 @@ import kotlinx.coroutines.launch
 import shellcommands.AdbCommandExecutor
 import shellcommands.AdbPathHelper
 import shellcommands.CommandBuilder
+import usecase.GetDevices
 import usecase.SendDeepLink
+import utils.DeviceInfoParser
 import utils.SystemChecker
 
 class IntentPusherViewModel(
     private val sendDeepLink: SendDeepLink,
+    private val getDevices: GetDevices,
     private val adbPathHelper: AdbPathHelper
 ) {
 
@@ -37,6 +40,10 @@ class IntentPusherViewModel(
 
     var inputContent by mutableStateOf("")
         private set
+
+    var connectedDevices by mutableStateOf(listOf<String>())
+        private set
+    var selectedDevice: String? by mutableStateOf(null)
 
     fun updateInputPath(inputPath: String) {
         this.inputPath = inputPath
@@ -62,8 +69,18 @@ class IntentPusherViewModel(
             return
         }
 
+        if (selectedDevice.isNullOrEmpty()) {
+            showDialog(ERROR_TITLE, "no devices connected")
+            return
+        }
+
         mainScope.launch {
-            sendDeepLink(inputPath, inputPackageName, inputContent).fold(
+            sendDeepLink(
+                inputPath,
+                selectedDevice,
+                inputPackageName,
+                inputContent
+            ).fold(
                 onSuccess = {
                     if (it.output.isNotEmpty()) {
                         showDialog("Success", "Intent has sent")
@@ -90,6 +107,31 @@ class IntentPusherViewModel(
         )
     }
 
+    fun refreshDevices() {
+        mainScope.launch {
+            getDevices(inputPath).fold(
+                onSuccess = { devices ->
+                    if (devices.isEmpty()) {
+                        selectedDevice = null
+                    }
+
+                    devices.firstOrNull()?.let { firstDevice ->
+                        if (!devices.contains(selectedDevice)) {
+                            selectedDevice = firstDevice
+                        }
+                    }
+                    connectedDevices = devices
+                },
+                onFailure = {
+                    val errorMessage = it.message
+                    if (errorMessage?.isNotEmpty() == true) {
+                        showDialog(ERROR_TITLE, errorMessage)
+                    }
+                }
+            )
+        }
+    }
+
     companion object {
         private const val ERROR_TITLE = "Error"
 
@@ -100,6 +142,14 @@ class IntentPusherViewModel(
                     SystemChecker(),
                     AdbPathHelper(SystemChecker())
                 )
+            ),
+            GetDevices(
+                AdbCommandExecutor(),
+                CommandBuilder(
+                    SystemChecker(),
+                    AdbPathHelper(SystemChecker())
+                ),
+                DeviceInfoParser()
             ),
             AdbPathHelper(SystemChecker())
         )
