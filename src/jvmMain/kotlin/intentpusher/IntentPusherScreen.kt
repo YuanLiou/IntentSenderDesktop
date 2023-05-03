@@ -111,7 +111,11 @@ fun IntentPusherScreen(
                     selectedValue = viewModel.selectedDevice.orEmpty(),
                     onDropDownItemSelected = { deviceName ->
                         viewModel.selectedDevice = deviceName
-                    }
+                    },
+                    onRefreshButtonClicked = {
+                        viewModel.refreshDevices()
+                    },
+                    modifier = modifier
                 )
 
                 TextInputFields(

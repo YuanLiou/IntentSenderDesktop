@@ -1,6 +1,7 @@
 package ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +46,7 @@ fun SpinnerDropdown(
     dropdownMenuWeight: Float,
     menuitems: ImmutableList<String>,
     onDropDownItemSelected: ((String) -> Unit)? = null,
+    onRefreshButtonClicked: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -52,6 +55,7 @@ fun SpinnerDropdown(
             .fillMaxWidth()
     ) {
         Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = modifier.fillMaxWidth()
         ) {
             Text(
@@ -67,20 +71,33 @@ fun SpinnerDropdown(
                 subtitle
             }
 
+            val refreshButtonWeight = 0.1f
+
             Box(
                 contentAlignment = Alignment.CenterStart,
                 modifier = modifier
-                    .weight(dropdownMenuWeight)
+                    .weight(dropdownMenuWeight - refreshButtonWeight)
             ) {
                 BoxedDropdownMenu(
                     label = boxedSpinnerTitle,
                     menuitems = menuitems,
                     selectedValue = selectedValue,
-                    endPadding = endPadding,
                     onDropDownItemSelected = onDropDownItemSelected,
                     modifier = modifier
                 )
             }
+
+            Image(
+                imageVector = Icons.Filled.Refresh,
+                contentDescription = "refresh devices",
+                modifier = modifier
+                    .weight(refreshButtonWeight)
+                    .padding(end = endPadding.dp)
+                    .clickable {
+                        onRefreshButtonClicked?.invoke()
+                    }
+                    .padding(16.dp)
+            )
         }
     }
 }

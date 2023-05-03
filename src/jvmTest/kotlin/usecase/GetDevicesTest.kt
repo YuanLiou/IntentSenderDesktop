@@ -18,8 +18,10 @@ import utils.DeviceInfoParser
 class GetDevicesTest {
     @MockK
     lateinit var adbCommandExecutor: AdbCommandExecutor
+
     @MockK
     lateinit var commandBuilder: CommandBuilder
+
     @MockK
     lateinit var deviceInfoParser: DeviceInfoParser
 
@@ -52,7 +54,6 @@ class GetDevicesTest {
         Truth.assertThat(result.isSuccess).isTrue()
         Truth.assertThat(result.getOrNull()?.size).isEqualTo(0)
     }
-
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
