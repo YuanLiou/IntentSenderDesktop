@@ -153,7 +153,7 @@ class IntentPusherViewModel(
                     SystemChecker(),
                     AdbPathHelper(SystemChecker())
                 ),
-                DeviceInfoParser()
+                DeviceInfoParser(SystemChecker())
             ),
             AdbPathHelper(SystemChecker())
         )
