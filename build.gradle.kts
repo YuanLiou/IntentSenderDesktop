@@ -7,8 +7,10 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
 }
 
+private val appVersion = "1.0.0"
+
 group = "com.rayliu"
-version = "1.0-SNAPSHOT"
+version = appVersion
 
 repositories {
     google()
@@ -46,7 +48,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "IntentSender"
-            packageVersion = "1.0.0"
+            packageVersion = appVersion
         }
     }
 }
