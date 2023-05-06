@@ -23,7 +23,42 @@ A popup will shown and ask you: are you sure you want to open it? Please select 
 
 <img width="250" src="https://user-images.githubusercontent.com/4803452/236611772-de223c7a-85a1-44fa-9209-ffb48acd726d.png">
 
+or you can build yourself. When launching the app, macOS won't ask you like above because it is you signed your own build.
 
+### Build 
+
+#### Jar
+
+For Mac machines in Intel chip, you might need to build yourself.
+
+Please pull this project into your computer, you also need
+
+  - Gradle
+  - Java 17
+  
+installed on your machine.
+
+Use this command to package a jar executable:
+
+```bash
+$ ./gradlew packageReleaseUberJarForCurrentOS
+```
+
+You can find the jar file at: `<projectDirectory>\build\compose\jars\`
+
+<img width="800" alt="image" src="https://user-images.githubusercontent.com/4803452/236612288-09ddf3df-e79c-4172-8a5c-71ee669538b7.png">
+
+#### Dmg
+
+You can also build Dmg installer file yourself. The command below will generate DMG install file and the app file for you.
+
+```bash
+$  ./gradlew packageReleaseDmg 
+```
+
+You can find the dmg file and app file at: `<projectDirectory>\build\binaries\main-release\`
+
+<img width="800" alt="SCR-20230506-okka-2" src="https://user-images.githubusercontent.com/4803452/236612562-4e383f72-5ecf-4b68-bb2e-774d1508723e.png">
 
 
 ## other project for learning Android
