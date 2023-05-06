@@ -1,6 +1,8 @@
 # IntentSenderDesktop
 A tool for sending deeplink Intent to an Android app for development
 
+[Download](https://github.com/YuanLiou/IntentSenderDesktop/releases)
+
 ## TL;DR
 This is a GUI tools to send the command below
 
