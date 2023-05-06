@@ -7,6 +7,9 @@ A tool for sending deeplink Intent to an Android app for development
 ### Windows screenshot
 <img width="600" src="https://user-images.githubusercontent.com/4803452/236091481-c11f6795-9ac3-4d2e-ac11-950bbe808144.png">
 
+### Pop!_OS (22.04) screenshot
+<img width="600" src="https://user-images.githubusercontent.com/4803452/236627123-7144772f-2288-4a01-8397-b5376c8d2202.jpg">
+
 ---
 ## How to launch the app on macOS?
 This window might popup when you trying to launch the jar program.
