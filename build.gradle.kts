@@ -48,6 +48,10 @@ compose.desktop {
             packageName = "IntentSender"
             packageVersion = version.toString()
         }
+
+        buildTypes.release.proguard {
+            obfuscate.set(true)
+        }
     }
 }
 
