@@ -1,6 +1,13 @@
 # IntentSenderDesktop
 A tool for sending deeplink Intent to an Android app for development
 
+## TL;DR
+This is a GUI tools to send the command below
+
+```bash
+$ adb shell am start -a android.intent.action.VIEW -d "your-link" com.myapp
+```
+
 ### macOS screenshot
 <img width="600" src="https://user-images.githubusercontent.com/4803452/235935582-4107d675-bd4a-4d0e-ba1c-570f0f1ed609.png">
 
@@ -28,11 +35,13 @@ A popup will shown and ask you: are you sure you want to open it? Please select 
 
 or you can build yourself. When launching the app, macOS won't ask you like above because it is you signed your own build.
 
+### macOS Intel Chip
+
+For Mac machines in Intel chip, you might need to build yourself. I don't have any Intel mac currently.
+
 ### Build 
 
 #### Jar
-
-For Mac machines in Intel chip, you might need to build yourself.
 
 Please pull this project into your computer, you also need
 
