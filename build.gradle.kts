@@ -76,6 +76,7 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
 
 detekt {
     buildUponDefaultConfig = true // preconfigure defaults
+    config = files("config/detekt/detekt.yml")
 }
 
 tasks.withType<Detekt>().configureEach {
