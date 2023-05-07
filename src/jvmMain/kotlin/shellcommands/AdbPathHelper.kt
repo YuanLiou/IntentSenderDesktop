@@ -10,9 +10,9 @@ class AdbPathHelper(
     fun lookUpAdbPath(inputPath: String = ""): String {
         val adbPath = inputPath.ifBlank {
             when (systemChecker.checkSystem()) {
-                OsPlatform.MAC -> DEFAULT_ADB_PATH_MACOS
-                OsPlatform.WINDOWS -> DEFAULT_ADB_PATH_WINDOWS
-                OsPlatform.LINUX -> DEFAULT_ADB_PATH_LINUX
+                OsPlatform.MAC -> DefaultAdbPathMacOS
+                OsPlatform.WINDOWS -> DefaultAdbPathWindows
+                OsPlatform.LINUX -> DefaultAdbPathLinux
                 OsPlatform.OTHER -> ""
             }
         }
@@ -20,8 +20,8 @@ class AdbPathHelper(
     }
 
     companion object {
-        private const val DEFAULT_ADB_PATH_MACOS = "~/Library/Android/sdk/platform-tools/adb"
-        private const val DEFAULT_ADB_PATH_LINUX = "~/Android/Sdk/platform-tools/adb"
-        private const val DEFAULT_ADB_PATH_WINDOWS = "%LOCALAPPDATA%\\Android\\sdk\\platform-tools\\adb.exe"
+        private const val DefaultAdbPathMacOS = "~/Library/Android/sdk/platform-tools/adb"
+        private const val DefaultAdbPathLinux = "~/Android/Sdk/platform-tools/adb"
+        private const val DefaultAdbPathWindows = "%LOCALAPPDATA%\\Android\\sdk\\platform-tools\\adb.exe"
     }
 }

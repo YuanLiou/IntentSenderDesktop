@@ -67,12 +67,12 @@ class IntentPusherViewModel(
 
     fun showSendMessage() {
         if (inputContent.isBlank()) {
-            showDialog(ERROR_TITLE, "input content is empty")
+            showDialog(ErrorTitle, "input content is empty")
             return
         }
 
         if (selectedDevice.isNullOrEmpty()) {
-            showDialog(ERROR_TITLE, "no devices connected")
+            showDialog(ErrorTitle, "no devices connected")
             return
         }
 
@@ -91,7 +91,7 @@ class IntentPusherViewModel(
                 onFailure = {
                     val errorMessage = it.message
                     if (errorMessage?.isNotEmpty() == true) {
-                        showDialog(ERROR_TITLE, errorMessage)
+                        showDialog(ErrorTitle, errorMessage)
 
                         if (errorMessage.contains("device") && errorMessage.contains("not found")) {
                             refreshDevices()
@@ -131,7 +131,7 @@ class IntentPusherViewModel(
                 onFailure = {
                     val errorMessage = it.message
                     if (errorMessage?.isNotEmpty() == true) {
-                        showDialog(ERROR_TITLE, errorMessage)
+                        showDialog(ErrorTitle, errorMessage)
                     }
                 }
             )
@@ -139,7 +139,7 @@ class IntentPusherViewModel(
     }
 
     companion object {
-        private const val ERROR_TITLE = "Error"
+        private const val ErrorTitle = "Error"
 
         fun create() = IntentPusherViewModel(
             sendDeepLink = SendDeepLink(
