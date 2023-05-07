@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+private const val REFRESH_BUTTON_WEIGHT = 0.1f
+
 @Composable
 fun SpinnerDropdown(
     title: String,
@@ -71,12 +73,10 @@ fun SpinnerDropdown(
                 subtitle
             }
 
-            val refreshButtonWeight = 0.1f
-
             Box(
                 contentAlignment = Alignment.CenterStart,
                 modifier = modifier
-                    .weight(dropdownMenuWeight - refreshButtonWeight)
+                    .weight(dropdownMenuWeight - REFRESH_BUTTON_WEIGHT)
             ) {
                 BoxedDropdownMenu(
                     label = boxedSpinnerTitle,
@@ -91,7 +91,7 @@ fun SpinnerDropdown(
                 imageVector = Icons.Filled.Refresh,
                 contentDescription = "refresh devices",
                 modifier = modifier
-                    .weight(refreshButtonWeight)
+                    .weight(REFRESH_BUTTON_WEIGHT)
                     .padding(end = endPadding.dp)
                     .clickable {
                         onRefreshButtonClicked?.invoke()

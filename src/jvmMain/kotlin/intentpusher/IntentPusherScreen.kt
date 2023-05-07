@@ -82,7 +82,7 @@ fun IntentPusherScreen(
                 },
                 topPadding,
                 endPadding,
-                modifier
+                modifier = modifier
             )
         }
     }
@@ -104,9 +104,9 @@ private fun IntentInfoInput(
     onClearButtonClicked: (() -> Unit)? = null,
     topPadding: Int,
     endPadding: Int,
-    modifier: Modifier
+    titleWeight: Float = 0.25f,
+    modifier: Modifier = Modifier
 ) {
-    val titleWeight = 0.25f
     val textInputWeight = 1f - titleWeight
     Column {
         TextInputFields(
@@ -279,6 +279,20 @@ fun IntentPusherScreenPreview() {
             endPadding = 12
         )
     }
+}
+
+@Composable
+@Preview
+fun IntentInfoInputPreview() {
+    IntentInfoInput(
+        inputAdbPath = "Popcorn tastes best with gold tequila and lots of marmalade.",
+        inputPackageName = "Sea-dogs hobble on pestilence at port degas!",
+        connectedDevices = emptyList<String>().toImmutableList(),
+        selectedDevice = "United beauties",
+        inputContent = "Peglegs sing from urchins like evil landlubbers.",
+        topPadding = 4,
+        endPadding = 4
+    )
 }
 
 @Preview
