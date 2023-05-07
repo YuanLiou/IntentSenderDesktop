@@ -3,6 +3,7 @@ package intentpusher
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,12 +19,13 @@ import utils.DeviceInfoParser
 import utils.SystemChecker
 
 class IntentPusherViewModel(
+    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val sendDeepLink: SendDeepLink,
     private val getDevices: GetDevices,
     private val adbPathHelper: AdbPathHelper
 ) {
 
-    private val mainScope = CoroutineScope(Dispatchers.Default)
+    private val mainScope = CoroutineScope(defaultDispatcher)
 
     private val defaultAdbPath: String
         get() = adbPathHelper.lookUpAdbPath()
@@ -140,14 +142,14 @@ class IntentPusherViewModel(
         private const val ERROR_TITLE = "Error"
 
         fun create() = IntentPusherViewModel(
-            SendDeepLink(
+            sendDeepLink = SendDeepLink(
                 AdbCommandExecutor(),
                 CommandBuilder(
                     SystemChecker(),
                     AdbPathHelper(SystemChecker())
                 )
             ),
-            GetDevices(
+            getDevices = GetDevices(
                 AdbCommandExecutor(),
                 CommandBuilder(
                     SystemChecker(),
@@ -155,7 +157,7 @@ class IntentPusherViewModel(
                 ),
                 DeviceInfoParser(SystemChecker())
             ),
-            AdbPathHelper(SystemChecker())
+            adbPathHelper = AdbPathHelper(SystemChecker())
         )
     }
 }
