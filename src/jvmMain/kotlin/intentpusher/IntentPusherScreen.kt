@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import ui.SpinnerDropdown
 import ui.TextInputFields
@@ -38,113 +39,174 @@ fun IntentPusherScreen(
         Surface(
             modifier = modifier.padding(4.dp)
         ) {
-            // region ShowDialogs
-            data class DialogInfo(val title: String, val message: String)
-            var dialogInfo by remember { mutableStateOf<DialogInfo?>(null) }
-            if (dialogInfo != null) {
-                ShowDialog(
-                    title = dialogInfo?.title.orEmpty(),
-                    message = dialogInfo?.message.orEmpty(),
-                    onDismissRequest = {
-                        viewModel.dismissDialog()
-                        dialogInfo = null
-                    },
-                    onOkButtonClicked = {
-                        viewModel.dismissDialog()
-                        dialogInfo = null
-                    }
-                )
-            }
-            // endregion ShowDialogs
-
-            val state = viewModel.viewStates.collectAsState().value
-            if (state is IntentPusherViewState.ShowDialog) {
-                dialogInfo = DialogInfo(
-                    title = state.title,
-                    message = state.message
-                )
-            }
+            PopupDialogs(
+                viewState = viewModel.viewStates.collectAsState().value,
+                onDismissRequest = {
+                    viewModel.dismissDialog()
+                },
+                onOkButtonClicked = {
+                    viewModel.dismissDialog()
+                }
+            )
 
             LaunchedEffect(true) {
                 viewModel.refreshDevices()
             }
 
-            val titleWeight = 0.25f
-            val textInputWeight = 1f - titleWeight
-            Column {
-                TextInputFields(
-                    title = "adb Path",
-                    textFieldText = {
-                        viewModel.inputPath
-                    },
-                    topPadding = topPadding,
-                    endPadding = endPadding,
-                    titleWeight = titleWeight,
-                    textInputWeight = textInputWeight,
-                    onTextFieldValueChanged = {
-                        viewModel.updateInputPath(it)
-                    }
-                )
-
-                TextInputFields(
-                    title = "Package Name",
-                    textFieldText = {
-                        viewModel.inputPackageName
-                    },
-                    topPadding = topPadding,
-                    endPadding = endPadding,
-                    titleWeight = titleWeight,
-                    textInputWeight = textInputWeight,
-                    onTextFieldValueChanged = {
-                        viewModel.updatePackageName(it)
-                    }
-                )
-
-                SpinnerDropdown(
-                    title = "Devices",
-                    subtitle = "select a device",
-                    topPadding = topPadding,
-                    endPadding = endPadding,
-                    titleWeight = titleWeight,
-                    dropdownMenuWeight = textInputWeight,
-                    menuitems = viewModel.connectedDevices.toImmutableList(),
-                    selectedValue = viewModel.selectedDevice.orEmpty(),
-                    onDropDownItemSelected = { deviceName ->
-                        viewModel.selectedDevice = deviceName
-                    },
-                    onRefreshButtonClicked = {
-                        viewModel.refreshDevices()
-                    },
-                    modifier = modifier
-                )
-
-                TextInputFields(
-                    title = "Content",
-                    textFieldText = {
-                        viewModel.inputContent
-                    },
-                    topPadding = topPadding,
-                    endPadding = endPadding,
-                    titleWeight = titleWeight,
-                    textInputWeight = textInputWeight,
-                    singleLine = false,
-                    lines = 3,
-                    onTextFieldValueChanged = {
-                        viewModel.updateContent(it)
-                    }
-                )
-                ActionButtons(
-                    topPadding = topPadding,
-                    endPadding = endPadding,
-                    onClearButtonClicked = {
-                        viewModel.clearFields()
-                    },
-                    onSendButtonClicked = {
-                        viewModel.showSendMessage()
-                    }
-                )
-            }
+            IntentInfoInput(
+                inputAdbPath = viewModel.inputPath,
+                onAdbPathValueChanged = {
+                    viewModel.updateInputPath(it)
+                },
+                inputPackageName = viewModel.inputPackageName,
+                onPackageNameValueChanged = {
+                    viewModel.updatePackageName(it)
+                },
+                connectedDevices = viewModel.connectedDevices.toImmutableList(),
+                selectedDevice = viewModel.selectedDevice.orEmpty(),
+                onDropDownItemSelected = { deviceName ->
+                    viewModel.selectedDevice = deviceName
+                },
+                onRefreshButtonClicked = {
+                    viewModel.refreshDevices()
+                },
+                inputContent = viewModel.inputContent,
+                onInputContentValueChanged = {
+                    viewModel.updateContent(it)
+                },
+                onSendButtonClicked = {
+                    viewModel.showSendMessage()
+                },
+                onClearButtonClicked = {
+                    viewModel.clearFields()
+                },
+                topPadding,
+                endPadding,
+                modifier
+            )
         }
+    }
+}
+
+@Composable
+private fun IntentInfoInput(
+    inputAdbPath: String,
+    onAdbPathValueChanged: ((String) -> Unit)? = null,
+    inputPackageName: String,
+    onPackageNameValueChanged: ((String) -> Unit)? = null,
+    connectedDevices: ImmutableList<String>,
+    selectedDevice: String,
+    onDropDownItemSelected: ((String) -> Unit)? = null,
+    onRefreshButtonClicked: (() -> Unit)? = null,
+    inputContent: String,
+    onInputContentValueChanged: ((String) -> Unit)? = null,
+    onSendButtonClicked: (() -> Unit)? = null,
+    onClearButtonClicked: (() -> Unit)? = null,
+    topPadding: Int,
+    endPadding: Int,
+    modifier: Modifier
+) {
+    val titleWeight = 0.25f
+    val textInputWeight = 1f - titleWeight
+    Column {
+        TextInputFields(
+            title = "adb Path",
+            textFieldText = { inputAdbPath },
+            topPadding = topPadding,
+            endPadding = endPadding,
+            titleWeight = titleWeight,
+            textInputWeight = textInputWeight,
+            onTextFieldValueChanged = {
+                onAdbPathValueChanged?.invoke(it)
+            }
+        )
+
+        TextInputFields(
+            title = "Package Name",
+            textFieldText = { inputPackageName },
+            topPadding = topPadding,
+            endPadding = endPadding,
+            titleWeight = titleWeight,
+            textInputWeight = textInputWeight,
+            onTextFieldValueChanged = {
+                onPackageNameValueChanged?.invoke(it)
+            }
+        )
+
+        SpinnerDropdown(
+            title = "Devices",
+            subtitle = "select a device",
+            topPadding = topPadding,
+            endPadding = endPadding,
+            titleWeight = titleWeight,
+            dropdownMenuWeight = textInputWeight,
+            menuitems = connectedDevices,
+            selectedValue = selectedDevice,
+            onDropDownItemSelected = { deviceName ->
+                onDropDownItemSelected?.invoke(deviceName)
+            },
+            onRefreshButtonClicked = {
+                onRefreshButtonClicked?.invoke()
+            },
+            modifier = modifier
+        )
+
+        TextInputFields(
+            title = "Content",
+            textFieldText = { inputContent },
+            topPadding = topPadding,
+            endPadding = endPadding,
+            titleWeight = titleWeight,
+            textInputWeight = textInputWeight,
+            singleLine = false,
+            lines = 3,
+            onTextFieldValueChanged = {
+                onInputContentValueChanged?.invoke(it)
+            }
+        )
+        ActionButtons(
+            topPadding = topPadding,
+            endPadding = endPadding,
+            onClearButtonClicked = {
+                onClearButtonClicked?.invoke()
+            },
+            onSendButtonClicked = {
+                onSendButtonClicked?.invoke()
+            }
+        )
+    }
+}
+
+@Composable
+private fun PopupDialogs(
+    viewState: IntentPusherViewState,
+    onDismissRequest: (() -> Unit)? = null,
+    onOkButtonClicked: (() -> Unit)? = null
+) {
+    // region ShowDialogs
+    data class DialogInfo(val title: String, val message: String)
+
+    var dialogInfo by remember { mutableStateOf<DialogInfo?>(null) }
+    if (dialogInfo != null) {
+        ShowDialog(
+            title = dialogInfo?.title.orEmpty(),
+            message = dialogInfo?.message.orEmpty(),
+            onDismissRequest = {
+                onDismissRequest?.invoke()
+                dialogInfo = null
+            },
+            onOkButtonClicked = {
+                onOkButtonClicked?.invoke()
+                dialogInfo = null
+            }
+        )
+    }
+    // endregion ShowDialogs
+    if (viewState is IntentPusherViewState.ShowDialog) {
+        dialogInfo = DialogInfo(
+            title = viewState.title,
+            message = viewState.message
+        )
     }
 }
 
