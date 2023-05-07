@@ -9,17 +9,16 @@ class AdbCommandExecutor {
     suspend fun executeCommand(command: Command, program: String?): CommandResult {
         return try {
             val result = execute(command)
-            if (result.exitCode == CODE_COMMAND_NOT_FOUND) {
+            if (result.exitCode == CodeCommandNotFound) {
                 val errorMessage = result.errorMessage.ifEmpty { "Command not found." }
                 throw CommandExecutorException(errorMessage)
-            } else if (result.exitCode == CODE_EXITED_WITH_SOME_ERROR) {
+            } else if (result.exitCode == CodeExitWithSomeError) {
                 val errorMessage = result.errorMessage.ifEmpty { "Exited with some error." }
                 throw CommandExecutorException(errorMessage)
             }
 
             result
         } catch (ioException: IOException) {
-            ioException.printStackTrace()
             if (ioException.message?.contains("error=2") == true) {
                 throw CommandExecutorException("Cannot run program \"${program.orEmpty()}\": No such file or directory")
             }
@@ -49,7 +48,7 @@ class AdbCommandExecutor {
     class CommandExecutorException(message: String) : Throwable(message)
 
     companion object {
-        private const val CODE_EXITED_WITH_SOME_ERROR = 1
-        private const val CODE_COMMAND_NOT_FOUND = 127
+        private const val CodeExitWithSomeError = 1
+        private const val CodeCommandNotFound = 127
     }
 }
