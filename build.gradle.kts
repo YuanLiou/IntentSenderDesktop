@@ -1,4 +1,5 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
@@ -32,7 +33,9 @@ kotlin {
             }
         }
         val jvmTest by getting {
+            @OptIn(ExperimentalComposeLibrary::class)
             dependencies {
+                implementation(compose.uiTestJUnit4)
                 implementation("io.mockk:mockk:1.13.5")
                 implementation("junit:junit:4.12")
                 implementation("com.google.truth:truth:1.1.3")
