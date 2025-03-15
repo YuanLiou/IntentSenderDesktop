@@ -7,9 +7,15 @@ pluginManagement {
     }
 
     plugins {
-        kotlin("multiplatform").version(extra["kotlin.version"] as String)
-        id("org.jetbrains.compose").version(extra["compose.version"] as String)
+        val kotlinVersion = extra["kotlin.version"] as String
+        val composeVersion = extra["compose.version"] as String
+
+        kotlin("multiplatform").version(kotlinVersion)
+        kotlin("plugin.compose").version(kotlinVersion)
+        id("org.jetbrains.compose").version(composeVersion)
     }
 }
 
 rootProject.name = "IntentSender"
+
+include(":desktop")
