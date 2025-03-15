@@ -184,7 +184,10 @@ private fun PopupDialogs(
     onOkButtonClicked: (() -> Unit)? = null
 ) {
     // region ShowDialogs
-    data class DialogInfo(val title: String, val message: String)
+    data class DialogInfo(
+        val title: String,
+        val message: String
+    )
 
     var dialogInfo by remember { mutableStateOf<DialogInfo?>(null) }
     if (dialogInfo != null) {
@@ -203,10 +206,11 @@ private fun PopupDialogs(
     }
     // endregion ShowDialogs
     if (viewState is IntentPusherViewState.ShowDialog) {
-        dialogInfo = DialogInfo(
-            title = viewState.title,
-            message = viewState.message
-        )
+        dialogInfo =
+            DialogInfo(
+                title = viewState.title,
+                message = viewState.message
+            )
     }
 }
 
@@ -220,7 +224,8 @@ private fun ActionButtons(
 ) {
     Box(
         contentAlignment = Alignment.CenterEnd,
-        modifier = Modifier.fillMaxWidth()
+        modifier =
+        Modifier.fillMaxWidth()
             .padding(top = topPadding.dp, end = endPadding.dp)
     ) {
         Row {

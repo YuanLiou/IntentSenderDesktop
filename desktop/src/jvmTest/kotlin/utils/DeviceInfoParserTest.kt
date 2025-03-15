@@ -8,7 +8,6 @@ import org.junit.Before
 import org.junit.Test
 
 class DeviceInfoParserTest {
-
     @MockK
     lateinit var systemChecker: SystemChecker
 

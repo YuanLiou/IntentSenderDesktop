@@ -9,9 +9,7 @@ class GetDevices(
     private val commandBuilder: CommandBuilder,
     private val deviceInfoParser: DeviceInfoParser
 ) {
-    suspend operator fun invoke(
-        adbPath: String
-    ): Result<List<String>> {
+    suspend operator fun invoke(adbPath: String): Result<List<String>> {
         val command = commandBuilder.buildDevicesCommand(adbPath)
         return runCatching {
             val commandResult = adbCommandExecutor.executeCommand(command, adbPath)

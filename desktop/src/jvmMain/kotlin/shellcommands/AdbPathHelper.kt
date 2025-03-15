@@ -6,16 +6,16 @@ import utils.SystemChecker
 class AdbPathHelper(
     private val systemChecker: SystemChecker
 ) {
-
     fun lookUpAdbPath(inputPath: String = ""): String {
-        val adbPath = inputPath.ifBlank {
-            when (systemChecker.checkSystem()) {
-                OsPlatform.MAC -> DefaultAdbPathMacOS
-                OsPlatform.WINDOWS -> DefaultAdbPathWindows
-                OsPlatform.LINUX -> DefaultAdbPathLinux
-                OsPlatform.OTHER -> ""
+        val adbPath =
+            inputPath.ifBlank {
+                when (systemChecker.checkSystem()) {
+                    OsPlatform.MAC -> DefaultAdbPathMacOS
+                    OsPlatform.WINDOWS -> DefaultAdbPathWindows
+                    OsPlatform.LINUX -> DefaultAdbPathLinux
+                    OsPlatform.OTHER -> ""
+                }
             }
-        }
         return adbPath
     }
 

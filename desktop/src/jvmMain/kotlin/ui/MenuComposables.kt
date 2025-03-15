@@ -52,7 +52,8 @@ fun SpinnerDropdown(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier
+        modifier =
+        modifier
             .padding(top = topPadding.dp)
             .fillMaxWidth()
     ) {
@@ -62,20 +63,23 @@ fun SpinnerDropdown(
         ) {
             Text(
                 title,
-                modifier = modifier.align(alignment = Alignment.CenterVertically)
+                modifier =
+                modifier.align(alignment = Alignment.CenterVertically)
                     .weight(titleWeight)
                     .padding(16.dp)
             )
 
-            val boxedSpinnerTitle = if (menuitems.isEmpty()) {
-                "Connect a device"
-            } else {
-                subtitle
-            }
+            val boxedSpinnerTitle =
+                if (menuitems.isEmpty()) {
+                    "Connect a device"
+                } else {
+                    subtitle
+                }
 
             Box(
                 contentAlignment = Alignment.CenterStart,
-                modifier = modifier
+                modifier =
+                modifier
                     .weight(dropdownMenuWeight - REFRESH_BUTTON_WEIGHT)
             ) {
                 BoxedDropdownMenu(
@@ -90,7 +94,8 @@ fun SpinnerDropdown(
             Image(
                 imageVector = Icons.Filled.Refresh,
                 contentDescription = "refresh devices",
-                modifier = modifier
+                modifier =
+                modifier
                     .weight(REFRESH_BUTTON_WEIGHT)
                     .padding(end = endPadding.dp)
                     .clickable {
@@ -125,7 +130,8 @@ private fun BoxedDropdownMenu(
         DropdownMenu(
             expanded = expander,
             onDismissRequest = { expander = false },
-            modifier = modifier
+            modifier =
+            modifier
                 .padding(end = endPadding.dp)
         ) {
             menuitems.forEachIndexed { _, itemTitle ->
@@ -153,7 +159,8 @@ private fun BoxedInputText(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier
+        modifier =
+        modifier
             .padding(end = endPadding.dp)
             .height(IntrinsicSize.Min)
     ) {
@@ -162,11 +169,12 @@ private fun BoxedInputText(
             value = selectedValue,
             enabled = isEnabled,
             trailingIcon = {
-                val icon = if (isExpandDropdownMenu) {
-                    Icons.Filled.KeyboardArrowUp
-                } else {
-                    Icons.Filled.KeyboardArrowDown
-                }
+                val icon =
+                    if (isExpandDropdownMenu) {
+                        Icons.Filled.KeyboardArrowUp
+                    } else {
+                        Icons.Filled.KeyboardArrowDown
+                    }
                 Icon(icon, "")
             },
             onValueChange = {},
@@ -177,7 +185,8 @@ private fun BoxedInputText(
         // Transparent clickable surface on top of OutlinedTextField
         Surface(
             color = Color.Transparent,
-            modifier = Modifier
+            modifier =
+            Modifier
                 .padding(top = 8.dp)
                 .fillMaxSize()
                 .clip(MaterialTheme.shapes.small)

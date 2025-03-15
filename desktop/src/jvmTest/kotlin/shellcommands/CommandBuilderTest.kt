@@ -10,7 +10,6 @@ import utils.OsPlatform
 import utils.SystemChecker
 
 class CommandBuilderTest {
-
     @MockK
     lateinit var systemChecker: SystemChecker
 
@@ -34,12 +33,13 @@ class CommandBuilderTest {
         every { systemChecker.checkSystem() } returns OsPlatform.MAC
 
         // When
-        val command = commandBuilder.buildDeepLinkCommand(
-            adbPath = "",
-            deviceName = "",
-            packageName = "com.myapp",
-            content = "Hello Test"
-        )
+        val command =
+            commandBuilder.buildDeepLinkCommand(
+                adbPath = "",
+                deviceName = "",
+                packageName = "com.myapp",
+                content = "Hello Test"
+            )
 
         // Then
         val expectedCommand = "sh -c test/path/adb shell 'am start -a android.intent.action.VIEW -d \"Hello Test\" com.myapp'"
@@ -57,12 +57,13 @@ class CommandBuilderTest {
         every { systemChecker.checkSystem() } returns OsPlatform.WINDOWS
 
         // When
-        val command = commandBuilder.buildDeepLinkCommand(
-            adbPath = "",
-            deviceName = null,
-            packageName = "com.myapp",
-            content = "Hello Test"
-        )
+        val command =
+            commandBuilder.buildDeepLinkCommand(
+                adbPath = "",
+                deviceName = null,
+                packageName = "com.myapp",
+                content = "Hello Test"
+            )
 
         // Then
         val expectedCommand = "cmd.exe /c C:\\test\\mypath\\adb.exe shell am start -a android.intent.action.VIEW -d \"Hello Test\" com.myapp"
@@ -80,12 +81,13 @@ class CommandBuilderTest {
         every { systemChecker.checkSystem() } returns OsPlatform.MAC
 
         // When
-        val command = commandBuilder.buildDeepLinkCommand(
-            adbPath = "",
-            deviceName = "testdevice",
-            packageName = "com.myapp",
-            content = "Hello Test 02"
-        )
+        val command =
+            commandBuilder.buildDeepLinkCommand(
+                adbPath = "",
+                deviceName = "testdevice",
+                packageName = "com.myapp",
+                content = "Hello Test 02"
+            )
 
         // Then
         val expectedCommand = "sh -c test/path/adb -s testdevice shell 'am start -a android.intent.action.VIEW -d \"Hello Test 02\" com.myapp'"

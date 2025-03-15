@@ -19,12 +19,11 @@ import utils.DeviceInfoParser
 import utils.SystemChecker
 
 class IntentPusherViewModel(
-    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val sendDeepLink: SendDeepLink,
     private val getDevices: GetDevices,
     private val adbPathHelper: AdbPathHelper
 ) {
-
     private val mainScope = CoroutineScope(defaultDispatcher)
 
     private val defaultAdbPath: String
@@ -106,11 +105,15 @@ class IntentPusherViewModel(
         _viewStates.value = IntentPusherViewState.WaitForUserInput
     }
 
-    private fun showDialog(title: String, message: String) {
-        _viewStates.value = IntentPusherViewState.ShowDialog(
-            title = title,
-            message = message
-        )
+    private fun showDialog(
+        title: String,
+        message: String
+    ) {
+        _viewStates.value =
+            IntentPusherViewState.ShowDialog(
+                title = title,
+                message = message
+            )
     }
 
     fun refreshDevices() {
@@ -141,23 +144,26 @@ class IntentPusherViewModel(
     companion object {
         private const val ErrorTitle = "Error"
 
-        fun create() = IntentPusherViewModel(
-            sendDeepLink = SendDeepLink(
-                AdbCommandExecutor(),
-                CommandBuilder(
-                    SystemChecker(),
-                    AdbPathHelper(SystemChecker())
-                )
-            ),
-            getDevices = GetDevices(
-                AdbCommandExecutor(),
-                CommandBuilder(
-                    SystemChecker(),
-                    AdbPathHelper(SystemChecker())
+        fun create() =
+            IntentPusherViewModel(
+                sendDeepLink =
+                SendDeepLink(
+                    AdbCommandExecutor(),
+                    CommandBuilder(
+                        SystemChecker(),
+                        AdbPathHelper(SystemChecker())
+                    )
                 ),
-                DeviceInfoParser(SystemChecker())
-            ),
-            adbPathHelper = AdbPathHelper(SystemChecker())
-        )
+                getDevices =
+                GetDevices(
+                    AdbCommandExecutor(),
+                    CommandBuilder(
+                        SystemChecker(),
+                        AdbPathHelper(SystemChecker())
+                    ),
+                    DeviceInfoParser(SystemChecker())
+                ),
+                adbPathHelper = AdbPathHelper(SystemChecker())
+            )
     }
 }

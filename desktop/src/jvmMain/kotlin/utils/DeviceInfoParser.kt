@@ -33,11 +33,10 @@ emulator-5554	device
         return result
     }
 
-    private fun lookUpDelimiter(): String {
-        return when (systemChecker.checkSystem()) {
+    private fun lookUpDelimiter(): String =
+        when (systemChecker.checkSystem()) {
             OsPlatform.MAC, OsPlatform.LINUX -> "\n"
             OsPlatform.WINDOWS -> "\r\n"
             OsPlatform.OTHER -> "\n"
         }
-    }
 }

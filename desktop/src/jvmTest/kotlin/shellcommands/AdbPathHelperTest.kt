@@ -11,7 +11,6 @@ import utils.OsPlatform
 import utils.SystemChecker
 
 class AdbPathHelperTest {
-
     @MockK
     lateinit var systemChecker: SystemChecker
 

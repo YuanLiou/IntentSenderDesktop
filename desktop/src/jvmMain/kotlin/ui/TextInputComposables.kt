@@ -26,7 +26,8 @@ fun TextInputFields(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier
+        modifier =
+        modifier
             .padding(top = topPadding.dp)
             .fillMaxWidth()
     ) {
@@ -35,7 +36,8 @@ fun TextInputFields(
         ) {
             Text(
                 title,
-                modifier = modifier.align(alignment = Alignment.CenterVertically)
+                modifier =
+                modifier.align(alignment = Alignment.CenterVertically)
                     .weight(titleWeight)
                     .padding(16.dp)
             )
@@ -46,7 +48,8 @@ fun TextInputFields(
                 },
                 singleLine = singleLine,
                 maxLines = lines,
-                modifier = modifier
+                modifier =
+                modifier
                     .align(alignment = Alignment.CenterVertically)
                     .weight(textInputWeight)
                     .fillMaxWidth()

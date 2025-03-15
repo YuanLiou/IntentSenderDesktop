@@ -18,12 +18,13 @@ class SendDeepLink(
             return Result.failure(IllegalArgumentException("content is empty"))
         }
 
-        val command = commandBuilder.buildDeepLinkCommand(
-            adbPath,
-            deviceName,
-            inputPackageName,
-            inputContent
-        )
+        val command =
+            commandBuilder.buildDeepLinkCommand(
+                adbPath,
+                deviceName,
+                inputPackageName,
+                inputContent
+            )
         return runCatching {
             adbCommandExecutor.executeCommand(command, adbPath)
         }
